@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use function filter_var;
 use function session_start;
 
@@ -17,13 +18,13 @@ final class SessionService {
      * 
      * @var SessionService
      */
-    private static SessionService $sessionService = null;
+    private static ?SessionService $sessionService = null;
 
     /**
      * 
      * @var User
      */
-    private User $user = null;
+    private ?User $user = null;
 
     private function __construct() {
         $this->start();
@@ -64,7 +65,7 @@ final class SessionService {
      * @return bool
      */
     public function isLoggedIn(): bool {
-        return $this->getUser() !== null && is_array($this->getUser()->getRoles()) && in_array($this->getUser()->getRoles(), "ROLE_USER");
+        return $this->getUser() !== null && is_array($this->getUser()->getRoles()) && in_array("ROLE_USER", $this->getUser()->getRoles());
     }
 
     /**
@@ -93,7 +94,7 @@ final class SessionService {
         //session_regenerate_id();                          // Rende la sessione più sicura, ma crea tante chiave redis e a qualcuno potrebbe venire un coccolone
         $userId = $this->retrieve();
         if ($userId > 0) {
-            $repo = new \App\Repository\UserRepository();
+            $repo = new UserRepository();
             $this->user = $repo->findOneById(1);
         }
         return true;
@@ -114,7 +115,6 @@ final class SessionService {
         session_destroy();
         session_write_close();
         setcookie(session_name(), '', 0, '/');
-        $this->deleteRedisSession();
 
         return true;
     }

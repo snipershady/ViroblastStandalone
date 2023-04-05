@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Components;
+namespace App\Component;
 
 use function filter_input;
 use function filter_input_array;
@@ -13,8 +13,6 @@ use function is_numeric;
  * Provide information about Request. All data returned are safe and sanitized.
  *
  * @author Stefano Perrini <stefano.perrini@bidoo.com> aka La Matrigna
- * @author Damiano Improta <damiano.improta@bidoo.com> aka Drizella
- * @author Simone Mosi <simone.mosi@bidoo.com> aka Frozen
  */
 final class Request {
 
@@ -22,38 +20,38 @@ final class Request {
      * Request Method: GET, POST
      * @var string
      */
-    private $method;
+    private string $method;
 
     /**
      * Input type as defined in filter.php
      * @see filter.php
      * @var string
      */
-    private $inputtype;
+    private string $inputtype;
 
     /**
      * Array of params
      * @var array
      */
-    private $params = null;
+    private ?array $params = null;
 
     /**
      * HTTP_HOST
      * @var string
      */
-    private $httphost;
+    private string $httphost;
 
     /**
      * REQUEST_URI
      * @var string
      */
-    private $requesturi;
+    private string $requesturi;
 
     public function __construct() {
-        $this->method = filter_input(INPUT_SERVER, "REQUEST_METHOD", FILTER_SANITIZE_STRING);
+        $this->method = filter_input(INPUT_SERVER, "REQUEST_METHOD", FILTER_UNSAFE_RAW);
         $this->inputtype = (int) $this->isGet();
-        $this->httphost = filter_input(INPUT_SERVER, 'HTTP_HOST', FILTER_SANITIZE_STRING);
-        $this->requesturi = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_STRING);
+        $this->httphost = filter_input(INPUT_SERVER, 'HTTP_HOST', FILTER_UNSAFE_RAW);
+        $this->requesturi = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_UNSAFE_RAW);
     }
 
     /**
@@ -61,7 +59,7 @@ final class Request {
      * @return string
      *         GET|POST|PUT|DELETE
      */
-    public function getMethod() {
+    public function getMethod(): string {
         return $this->method;
     }
 
@@ -69,7 +67,7 @@ final class Request {
      * Verify if request method is POST
      * @return bool
      */
-    public function isPost() {
+    public function isPost(): bool {
         return $this->method === "POST";
     }
 
@@ -77,7 +75,7 @@ final class Request {
      * Verify if request method is GET
      * @return bool
      */
-    public function isGet() {
+    public function isGet(): bool {
         return $this->method === "GET";
     }
 
@@ -86,7 +84,7 @@ final class Request {
      * @see filter.php
      * @return int
      */
-    public function getInputtype() {
+    public function getInputtype(): int {
         return $this->inputtype;
     }
 
@@ -95,7 +93,7 @@ final class Request {
      * @example localhost
      * @return string
      */
-    public function getHttphost() {
+    public function getHttphost(): string {
         return $this->httphost;
     }
 
@@ -104,7 +102,7 @@ final class Request {
      * @example /administration/changepassword.php
      * @return string
      */
-    public function getRequesturi() {
+    public function getRequesturi(): string {
         return $this->requesturi;
     }
 
@@ -113,7 +111,7 @@ final class Request {
      * Retrieve from Request params received via POST or GET then sanitize and set type for each parameter.
      * @return array
      */
-    public function getParams($checkNumeric = true) {
+    public function getParams($checkNumeric = true): array {
         if ($this->params === null) {
             $this->params = $this->sanitizeParams($checkNumeric);
         }
@@ -150,22 +148,22 @@ final class Request {
     /**
      * @return string <p>JSON format</p>
      */
-    public function getRawValues() {
+    public function getRawValues(): string {
         return file_get_contents('php://input');
     }
-    
+
     /**
      * @return array
      */
-    public function getRawValuesArray() {
+    public function getRawValuesArray(): array {
         return json_decode($this->getRawValues(), true, JSON_NUMERIC_CHECK);
     }
-    
+
     /**
      * 
      * @return string[]
      */
-    public function getHeaders(){
+    public function getHeaders(): array {
         return getallheaders();
     }
 
@@ -174,10 +172,10 @@ final class Request {
      * @return array
      * Sanitize all INPUT params from REQUST ( GET or POST method )
      */
-    private function sanitizeParams($checkNumeric = true) {
+    private function sanitizeParams($checkNumeric = true): array {
         $arrayData = filter_input_array($this->inputtype);
 
-        return $arrayData !== null ? $this->iterateArray($arrayData,$checkNumeric) : [];
+        return $arrayData !== null ? $this->iterateArray($arrayData, $checkNumeric) : [];
     }
 
     /**
@@ -186,13 +184,13 @@ final class Request {
      * @param bool $checkNumeric default true
      * @return array
      */
-    private function iterateArray($arrayData,$checkNumeric = true) {
+    private function iterateArray($arrayData, $checkNumeric = true): array {
         $localArray = [];
         foreach ($arrayData as $key => $value) {
             if (is_array($value)) {
-                $localArray[$key] = $this->iterateArray($value,$checkNumeric);
+                $localArray[$key] = $this->iterateArray($value, $checkNumeric);
             } else {
-                $localArray = $this->setParams($localArray, $key, $value,$checkNumeric);
+                $localArray = $this->setParams($localArray, $key, $value, $checkNumeric);
             }
         }
         return $localArray;
@@ -206,7 +204,7 @@ final class Request {
      * @param bool $checkNumeric default true
      * @return array
      */
-    private function setParams($localArray, $key, $value,$checkNumeric = true) {
+    private function setParams(array $localArray, string $key, string $value, bool $checkNumeric = true): array {
         if (is_numeric($value) && $checkNumeric) {
             $localArray[$key] = $this->getSanitizedNumber($value);
         } else {
@@ -235,7 +233,7 @@ final class Request {
      * @param string $value
      * @return int
      */
-    private function getSanitizedIntValue($value) {
+    private function getSanitizedIntValue($value): int {
         return (int) filter_var($value, FILTER_SANITIZE_NUMBER_INT);
     }
 
@@ -244,7 +242,7 @@ final class Request {
      * @param string $value
      * @return float
      */
-    private function getSanitizedFloatValue($value) {
+    private function getSanitizedFloatValue($value): float {
         return (float) filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
     }
 
@@ -253,8 +251,8 @@ final class Request {
      * @param string $value
      * @return string
      */
-    private function getSanitizedString($value) {
-        return trim(filter_var($value, FILTER_SANITIZE_STRING, FILTER_NULL_ON_FAILURE));
+    private function getSanitizedString($value): string {
+        return trim(filter_var($value, FILTER_UNSAFE_RAW, FILTER_NULL_ON_FAILURE));
     }
 
 }

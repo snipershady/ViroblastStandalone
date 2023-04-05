@@ -5,9 +5,7 @@
 # Copyright © University of Washington. All rights reserved.
 # Written by Wenjie Deng in the Department of Microbiology at University of Washington.
 #######################################################################################
-//require_once 'bootstrap.php';
-//$s = new \App\Service\ViroBlastIniParser();
-//var_dump($s->foo()); exit;
+require_once __DIR__ . '/bootstrap.php';
 ?>
 
 <!DOCTYPE html>
