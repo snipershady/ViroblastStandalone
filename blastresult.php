@@ -73,7 +73,7 @@ require_once 'bootstrap.php';
             $alignmentView = (empty($_GET['alignmentView'])) ? '' : $_GET['alignmentView'];
 
             if ($blast_flag == 1) {
-                $jobid = time() . rand(10, 99);
+                $jobid = time() . random_int(10, 99);
             }
             if (!$blast_flag && !$jobid) {
                 echo "<p>Error: No job submitted.</p>";
@@ -97,7 +97,7 @@ require_once 'bootstrap.php';
                 $dbGeneticCode = (empty($_POST['dbCode'])) ? '' : $_POST['dbCode'];
                 $otherParam = (empty($_POST['OTHER_ADVANCED'])) ? '' : $_POST['OTHER_ADVANCED'];
                 if ($otherParam) {
-                    if (!preg_match("/^\s+$/", $otherParam) && !preg_match("/^\s*\-[A-Za-z]/", $otherParam)) {
+                    if (!preg_match("/^\s+$/", (string) $otherParam) && !preg_match("/^\s*\-[A-Za-z]/", (string) $otherParam)) {
                         echo "Error: The other advanced options must start with \"-\"";
                         exit;
                     }
@@ -156,14 +156,14 @@ require_once 'bootstrap.php';
                         fwrite($fp, $buffer);
                         fclose($fp);
                     }
-                } elseif ($querySeq && !preg_match("/^\s+$/", $querySeq)) {
+                } elseif ($querySeq && !preg_match("/^\s+$/", (string) $querySeq)) {
                     @ $fp1 = fopen("$dataPath/$jobid.blastinput.txt", "w", 1);
                     if (!$fp1) {
                         echo "<p><strong> Error: couldn't open $dataPath/$jobid.blastinput.txt </strong></p></body></html>";
                         exit;
                     }
 
-                    fwrite($fp1, $querySeq);
+                    fwrite($fp1, (string) $querySeq);
                     fclose($fp1);
                 } else {
                     echo "<p style='color: red'>Error: please enter your query sequence or upload your fasta sequence file.</p><br>";
@@ -320,7 +320,7 @@ require_once 'bootstrap.php';
                             if (!$line) {
                                 continue;
                             }
-                            list($page, $query_name, $match_name, $score, $identities, $percentage, $e_value, $link) = preg_split("/\t/", $line);
+                            [$page, $query_name, $match_name, $score, $identities, $percentage, $e_value, $link] = preg_split("/\t/", $line);
 
                             if ($cutoffType == 'pct') {
                                 $subject = $percentage;
@@ -432,7 +432,7 @@ require_once 'bootstrap.php';
                                     $queryName = $element[1];
                                     $target_name = $element[7];
                                     $var_target = $page . "\t" . $element[1] . "\t" . $element[2];
-                                    if (count($element) != 1) {
+                                    if ((is_countable($element) ? count($element) : 0) != 1) {
                                         if ($queryName == $preQueryName) {
                                             $i++;
                                         } else {
@@ -465,7 +465,7 @@ require_once 'bootstrap.php';
                                     $page = $element[0];
                                     $target_name = $element[7];
                                     $var_target = $page . "\t" . $element[1] . "\t" . $element[2];
-                                    if (count($element) != 1) {
+                                    if ((is_countable($element) ? count($element) : 0) != 1) {
                                         if ($filt_val != 0) {
                                             if ($i == 0) {
                                                 $query_name = $element[1];

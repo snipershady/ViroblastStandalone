@@ -1,6 +1,8 @@
 <?php
 
-require_once 'bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
+$epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
+
 ###############################################################
 # File Download 1.0
 ###############################################################
@@ -21,8 +23,7 @@ define('LOG_FILE', './downloads.log');
 // If myme type is set to empty string then script will try to detect mime type 
 // itself, which would only work if you have Mimetype or Fileinfo extensions
 // installed on server.
-$allowed_ext = array(
-    // archives
+$allowed_ext = [
     'zip' => 'application/zip',
     // documents
     'pdf' => 'application/pdf',
@@ -48,19 +49,21 @@ $allowed_ext = array(
     'mpe' => 'video/mpeg',
     'mov' => 'video/quicktime',
     'avi' => 'video/x-msvideo'
-);
+];
 
 ####################################################################
 ###  DO NOT CHANGE BELOW
 ####################################################################
-
-if (!isset($_GET['ID']) || empty($_GET['ID'])) {
-    die("Please specify file name for download.");
+$basenameid = (string) filter_input(INPUT_GET, "ID", FILTER_UNSAFE_RAW);
+if (empty($basenameid)) {
+    //"Please specify file name for download."
+    header("location: index.php");
+    exit;
 }
 
 // Get real file name.
 // Remove any path info to avoid hacking by adding relative path, etc.
-$fname = basename($_GET['ID']);
+$fname = basename($basenameid);
 
 // Check if the file exists
 if (!is_file(BASE_DIR . $fname)) {
