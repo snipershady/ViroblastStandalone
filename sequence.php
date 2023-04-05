@@ -5,7 +5,9 @@
 # Copyright © University of Washington. All rights reserved.
 # Written by Wenjie Deng in the Department of Microbiology at University of Washington.
 #######################################################################################
-require_once 'bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
+$epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
+
 ?>
 
 <!DOCTYPE html>
@@ -18,14 +20,13 @@ require_once 'bootstrap.php';
     <body style="font-family: Courier New; font-size: 10pt">
 
         <?php
-        
         set_time_limit(600);
-        $jobid = (empty($_GET['jobid'])) ? '' : $_GET['jobid'];
-        $target = (empty($_POST['target'])) ? '' : $_POST['target'];
-        $dldseq = (empty($_POST['dldseq'])) ? '' : $_POST['dldseq'];
-        $seqtype = (empty($_POST['seqtype'])) ? '' : $_POST['seqtype'];
+        $jobid = $epti->getTypedValue(filter_input(INPUT_GET, "jobid", FILTER_UNSAFE_RAW), true);
+        $target = filter_input(INPUT_POST, "target", FILTER_UNSAFE_RAW);
+        $dldseq = filter_input(INPUT_POST, "dldseq", FILTER_UNSAFE_RAW); 
+        $seqtype = filter_input(INPUT_POST, "seqtype", FILTER_UNSAFE_RAW);
         $downloadFile = $jobid . ".download.fas";
-        $blastFiles = array();
+        $blastFiles = [];
         $fp_log = fopen("$dataPath/$jobid.log", "r") or die("Cannot open $jobid.log to read");
         while (!feof($fp_log)) {
             $line = fgets($fp_log);
@@ -47,7 +48,7 @@ require_once 'bootstrap.php';
 
         if ($dldseq) {
             $fp_parse = fopen("$dataPath/$jobid.download.txt", "r") or die("Cannot open $jobid.download.txt to read");
-            $target = array();
+            $target = [];
             while (!feof($fp_parse)) {
                 $record = fgets($fp_parse);
                 $record = rtrim($record);
@@ -58,10 +59,10 @@ require_once 'bootstrap.php';
             }
             fclose($fp_parse);
         }
-        $sbjcts = array();
-        $querysbjcts = array();
-        for ($i = 0; $i < count($target); $i++) {
-            list($page, $query, $sbjct) = preg_split("/\t/", $target[$i]);
+        $sbjcts = [];
+        $querysbjcts = [];
+        for ($i = 0; $i < (is_countable($target) ? count($target) : 0); $i++) {
+            [$page, $query, $sbjct] = preg_split("/\t/", (string) $target[$i]);
             $sbjcts[$sbjct] = 1;
             $querysbjct = $query . "-" . $sbjct;
             $querysbjcts[$querysbjct] = 1;
@@ -70,10 +71,10 @@ require_once 'bootstrap.php';
         $fp_dld = fopen("$dataPath/$jobid.download.fas", "w", 1) or die("couldn't open download.fas to write");
 
         if ($seqtype == "entire") {
-            $sbjctSeq = array();
-            $sbjctTitle = array();
+            $sbjctSeq = [];
+            $sbjctTitle = [];
             $flag = 0;
-            for ($i = 0; $i < count($blastFiles); $i++) {
+            for ($i = 0; $i < (is_countable($blastFiles) ? count($blastFiles) : 0); $i++) {
                 $file = $blastFiles[$i];
                 $fp = fopen($file, "r") or die("couldn't open $file");
                 while (!feof($fp)) {
@@ -96,7 +97,7 @@ require_once 'bootstrap.php';
                     }
                 }
             }
-            while (list ($name, $value) = each($sbjcts)) {
+            foreach ($sbjcts as $name => $value) {
                 $seqName = $sbjctTitle[$name];
                 $seq = $sbjctSeq[$name];
                 fwrite($fp_dld, "$seqName");
@@ -107,10 +108,10 @@ require_once 'bootstrap.php';
                 }
             }
         } elseif ($seqtype == "mapping") {
-            $accName = array();
-            $querySeq = array();
-            $sbjctSeq = array();
-            $sbjctOri = array();
+            $accName = [];
+            $querySeq = [];
+            $sbjctSeq = [];
+            $sbjctOri = [];
             $flag = 0;
             $fp_st = fopen("$dataPath/$jobid.out", "r") or die("couldn't open $jobid.out.");
             while (!feof($fp_st)) {
