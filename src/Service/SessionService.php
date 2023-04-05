@@ -9,7 +9,7 @@ use function session_start;
 /**
  * Description of SessionService
  *
- * @author Stefano Perrini <stefano.perrini@bidoo.com.com> aka La Matrigna
+ * @author Stefano Perrini <perrini.stefano@gmail.com> aka La Matrigna
  */
 final class SessionService {
 
