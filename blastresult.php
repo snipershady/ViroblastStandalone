@@ -5,7 +5,8 @@
 # Copyright © University of Washington. All rights reserved.
 # Written by Wenjie Deng in the Department of Microbiology at University of Washington.
 #######################################################################################
-require_once 'bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
+$epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
 ?>
 
 <!DOCTYPE html>
@@ -54,23 +55,23 @@ require_once 'bootstrap.php';
 
             <?php
             
-            $jobid = (empty($_GET['jobid'])) ? '' : $_GET['jobid'];
-            $blastdb = (empty($_POST['blastdb'])) ? '' : $_POST['blastdb'];
-            $blastpath = (empty($_POST['blastpath'])) ? '' : $_POST['blastpath'];
-            $patientIDarray = (empty($_POST['patientIDarray'])) ? '' : $_POST['patientIDarray'];
-            $opt = (empty($_GET['opt'])) ? '' : $_GET['opt'];
-            $blast_flag = (empty($_POST['blast_flag'])) ? '' : $_POST['blast_flag'];
-            $filter_flag = (empty($_POST['filter_flag'])) ? '' : $_POST['filter_flag'];
-            $filt_val = (empty($_POST['filt_val'])) ? '' : $_POST['filt_val'];
-            $cutoffType = (empty($_POST['cutoffType'])) ? '' : $_POST['cutoffType'];
-            $pct_cutoff = (empty($_POST['pct_cutoff'])) ? '' : $_POST['pct_cutoff'];
-            $blst_cutoff = (empty($_POST['blst_cutoff'])) ? '' : $_POST['blst_cutoff'];
-            $searchType = (empty($_POST['searchType'])) ? '' : $_POST['searchType'];
-            $program = (empty($_POST['program'])) ? '' : $_POST['program'];
-            $dot = (int) filter_input(INPUT_POST, "dot", FILTER_VALIDATE_INT);
-            $querySeq = (empty($_POST['querySeq'])) ? '' : $_POST['querySeq'];
+            $jobid = $epti->getTypedValue(filter_input(INPUT_GET, "jobid", FILTER_UNSAFE_RAW), true);
+            $blastdb = filter_input(INPUT_POST, "blastdb", FILTER_UNSAFE_RAW); //(empty($_POST['blastdb'])) ? '' : $_POST['blastdb'];
+            $blastpath = filter_input(INPUT_POST, "blastpath", FILTER_UNSAFE_RAW); //(empty($_POST['blastpath'])) ? '' : $_POST['blastpath'];
+            $patientIDarray = filter_input(INPUT_POST, "patientIDarray", FILTER_UNSAFE_RAW); //(empty($_POST['patientIDarray'])) ? '' : $_POST['patientIDarray'];
+            $opt = filter_input(INPUT_GET, "opt", FILTER_UNSAFE_RAW); //(empty($_GET['opt'])) ? '' : $_GET['opt'];
+            $blast_flag = filter_input(INPUT_POST, "blast_flag", FILTER_UNSAFE_RAW); //(empty($_POST['blast_flag'])) ? '' : $_POST['blast_flag'];
+            $filter_flag = filter_input(INPUT_POST, "filter_flag", FILTER_UNSAFE_RAW); //(empty($_POST['filter_flag'])) ? '' : $_POST['filter_flag'];
+            $filt_val = filter_input(INPUT_POST, "filt_val", FILTER_UNSAFE_RAW); //(empty($_POST['filt_val'])) ? '' : $_POST['filt_val'];
+            $cutoffType = filter_input(INPUT_POST, "cutoffType", FILTER_UNSAFE_RAW); //(empty($_POST['cutoffType'])) ? '' : $_POST['cutoffType'];
+            $pct_cutoff = filter_input(INPUT_POST, "pct_cutoff", FILTER_UNSAFE_RAW); //(empty($_POST['pct_cutoff'])) ? '' : $_POST['pct_cutoff'];
+            $blst_cutoff = filter_input(INPUT_POST, "blst_cutoff", FILTER_UNSAFE_RAW); //(empty($_POST['blst_cutoff'])) ? '' : $_POST['blst_cutoff'];
+            $searchType = filter_input(INPUT_POST, "searchType", FILTER_UNSAFE_RAW); //(empty($_POST['searchType'])) ? '' : $_POST['searchType'];
+            $program = filter_input(INPUT_POST, "program", FILTER_UNSAFE_RAW); //(empty($_POST['program'])) ? '' : $_POST['program'];
+            $dot = $epti->getTypedValue(filter_input(INPUT_POST, "dot", FILTER_UNSAFE_RAW), true);
+            $querySeq = filter_input(INPUT_POST, "querySeq", FILTER_UNSAFE_RAW); //(empty($_POST['querySeq'])) ? '' : $_POST['querySeq'];
             $blastagainstfile = (empty($_FILES['blastagainstfile']['name'])) ? '' : $_FILES['blastagainstfile']['name'];
-            $alignmentView = (empty($_GET['alignmentView'])) ? '' : $_GET['alignmentView'];
+            $alignmentView = filter_input(INPUT_GET, "alignmentView", FILTER_UNSAFE_RAW); //(empty($_GET['alignmentView'])) ? '' : $_GET['alignmentView'];
 
             if ($blast_flag == 1) {
                 $jobid = time() . random_int(10, 99);
@@ -81,21 +82,23 @@ require_once 'bootstrap.php';
                 exit;
             }
 
-            if ($searchType == 'advanced') {
-                $expect = (empty($_POST['expect'])) ? 10 : $_POST['expect'];
-                $wordSize = (empty($_POST['wordSize'])) ? '' : $_POST['wordSize'];
-                $targetSeqs = (empty($_POST['targetSeqs'])) ? '' : $_POST['targetSeqs'];
-                $mmScore = (empty($_POST['mmScore'])) ? '' : $_POST['mmScore'];
-                $matrix = (empty($_POST['matrix'])) ? '' : $_POST['matrix'];
-                $gapCost = (empty($_POST['gapCost'])) ? '' : $_POST['gapCost'];
-                $filter = (empty($_POST['filter'])) ? 'F' : $_POST['filter'];
-                $softMask = (empty($_POST['softMask'])) ? 'F' : $_POST['softMask'];
-                $lowerCaseMask = (empty($_POST['lowerCaseMask'])) ? 'F' : $_POST['lowerCaseMask'];
-                $ungapAlign = (empty($_POST['ungapAlign'])) ? 'F' : $_POST['ungapAlign'];
-                $alignmentView = (empty($_POST['outFmt'])) ? 0 : $_POST['outFmt'];
-                $geneticCode = (empty($_POST['qCode'])) ? '' : $_POST['qCode'];
-                $dbGeneticCode = (empty($_POST['dbCode'])) ? '' : $_POST['dbCode'];
-                $otherParam = (empty($_POST['OTHER_ADVANCED'])) ? '' : $_POST['OTHER_ADVANCED'];
+            if ($searchType === 'advanced') {
+                
+                $expectpost = filter_input(INPUT_POST, "expect", FILTER_SANITIZE_NUMBER_INT);//
+                $expect = !empty($expectpost) ? $expectpost : 10; //   (empty($_POST['expect'])) ? 10 : $_POST['expect'];
+                $wordSize = filter_input(INPUT_POST, "wordSize", FILTER_UNSAFE_RAW);// (empty($_POST['wordSize'])) ? '' : $_POST['wordSize'];
+                $targetSeqs = filter_input(INPUT_POST, "targetSeqs", FILTER_UNSAFE_RAW);// (empty($_POST['targetSeqs'])) ? '' : $_POST['targetSeqs'];
+                $mmScore = filter_input(INPUT_POST, "mmScore", FILTER_UNSAFE_RAW);// (empty($_POST['mmScore'])) ? '' : $_POST['mmScore'];
+                $matrix = filter_input(INPUT_POST, "matrix", FILTER_UNSAFE_RAW);// (empty($_POST['matrix'])) ? '' : $_POST['matrix'];
+                $gapCost = filter_input(INPUT_POST, "gapCost", FILTER_UNSAFE_RAW);// (empty($_POST['gapCost'])) ? '' : $_POST['gapCost'];
+                $filter = filter_input(INPUT_POST, "filter", FILTER_UNSAFE_RAW);// (empty($_POST['filter'])) ? 'F' : $_POST['filter'];
+                $softMask = filter_input(INPUT_POST, "softMask", FILTER_UNSAFE_RAW);// (empty($_POST['softMask'])) ? 'F' : $_POST['softMask'];
+                $lowerCaseMask = filter_input(INPUT_POST, "lowerCaseMask", FILTER_UNSAFE_RAW);// (empty($_POST['lowerCaseMask'])) ? 'F' : $_POST['lowerCaseMask'];
+                $ungapAlign = filter_input(INPUT_POST, "ungapAlign", FILTER_UNSAFE_RAW);// (empty($_POST['ungapAlign'])) ? 'F' : $_POST['ungapAlign'];
+                $alignmentView = filter_input(INPUT_POST, "outFmt", FILTER_UNSAFE_RAW);// (empty($_POST['outFmt'])) ? 0 : $_POST['outFmt'];
+                $geneticCode = filter_input(INPUT_POST, "qCode", FILTER_UNSAFE_RAW);// (empty($_POST['qCode'])) ? '' : $_POST['qCode'];
+                $dbGeneticCode = filter_input(INPUT_POST, "dbCode", FILTER_UNSAFE_RAW);// (empty($_POST['dbCode'])) ? '' : $_POST['dbCode'];
+                $otherParam = filter_input(INPUT_POST, "OTHER_ADVANCED", FILTER_UNSAFE_RAW);// (empty($_POST['OTHER_ADVANCED'])) ? '' : $_POST['OTHER_ADVANCED'];
                 if ($otherParam) {
                     if (!preg_match("/^\s+$/", (string) $otherParam) && !preg_match("/^\s*\-[A-Za-z]/", (string) $otherParam)) {
                         echo "Error: The other advanced options must start with \"-\"";
