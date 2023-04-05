@@ -13,8 +13,8 @@
             <h2>Login</h2>
             <form action="login.php" method="POST">
                 <div class="mb-3 mt-3">
-                    <label for="email">Email:</label>
-                    <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+                    <label for="username">Username:</label>
+                    <input type="text" class="form-control" id="username" placeholder="Enter username" name="username">
                 </div>
                 <div class="mb-3">
                     <label for="pwd">Password:</label>

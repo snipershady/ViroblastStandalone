@@ -17,4 +17,12 @@ interface UserRepositoryInterface {
      * @return User|null
      */
     function findOneById(int $id): ?User;
+    
+   /**
+    * 
+    * @param string $username
+    * @param string $password
+    * @return User|null
+    */
+    function findOneUsernameAndPassword(string $username, string $password): ?User;
 }

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use App\Service\SessionService;
 
 /**
@@ -13,17 +14,17 @@ use App\Service\SessionService;
 class LoginController extends AbstractController {
 
     public function login(): void {
-        var_dump($this->request->getParams());
+
         if ($this->request->isGet()) {
             $this->redirect("login_page.php");
         }
-
-        $user = new User();
-        $user
-                ->setId(1)
-                ->setRoles(["ROLE_USER"])
-                ->setUsername("shady")
-                ->setEmail("perrini.stefano@gmail.com");
+        $username = $this->request->getParamValueByKey("username", false);
+        $password = $this->request->getParamValueByKey("pswd", false);
+        $repo = new UserRepository();
+        $user = $repo->findOneUsernameAndPassword($username, $password);
+        if ($user === null) {
+            $this->redirect("login_page.php");
+        }
         $session = SessionService::getInstance();
         $session->create($user);
 

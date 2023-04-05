@@ -12,7 +12,7 @@ class User {
     private int $id;
     private string $username;
     private string $email;
-    private string $password;
+    private string $password = "";
     private array $roles = [];
 
     public function getId(): int {
