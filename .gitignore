@@ -1,2 +1,9 @@
 nbproject
 vendor
+/var/
+/vendor/
+/nbproject/
+.phpunit
+.phpunit.result.cache
+/phpunit.xml
+
