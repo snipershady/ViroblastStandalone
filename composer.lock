@@ -1,0 +1,73 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "861d92d7789ffad3b3aa31d16d3a7315",
+    "packages": [
+        {
+            "name": "snipershady/typeidentifier",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/snipershady/type-identifier.git",
+                "reference": "316aee3cf456cb09acf100d5199bd235a32d8150"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/snipershady/type-identifier/zipball/316aee3cf456cb09acf100d5199bd235a32d8150",
+                "reference": "316aee3cf456cb09acf100d5199bd235a32d8150",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "*",
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "TypeIdentifier\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Stefano Perrini",
+                    "email": "perrini.stefano@gmail.com",
+                    "homepage": "https://www.spinfo.it"
+                }
+            ],
+            "description": "Free service to identify primitive type of a variable",
+            "homepage": "https://www.spinfo.it",
+            "keywords": [
+                "primitive",
+                "strict type",
+                "type"
+            ],
+            "support": {
+                "issues": "https://github.com/snipershady/type-identifier/issues",
+                "source": "https://github.com/snipershady/type-identifier/tree/v1.0.2"
+            },
+            "time": "2022-09-29T10:37:17+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=8.1",
+        "ext-json": "*"
+    },
+    "platform-dev": [],
+    "plugin-api-version": "2.2.0"
+}
