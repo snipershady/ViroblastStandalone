@@ -13,8 +13,6 @@ $epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
 // MUST end with slash (i.e. "/" )
 define('BASE_DIR', './data/');
 
-// log downloads?  true/false
-define('LOG_DOWNLOADS', true);
 
 // log file name
 define('LOG_FILE', './downloads.log');
@@ -82,7 +80,7 @@ if (!array_key_exists($fext, $allowed_ext)) {
 }
 
 // get mime type
-if ($allowed_ext[$fext] == '') {
+if (empty($allowed_ext[$fext])) {
     $mtype = '';
     // mime type is not set, get from server settings
     if (function_exists('mime_content_type')) {
@@ -114,10 +112,6 @@ header("Content-Length: " . $fsize);
 // download
 @readfile(BASE_DIR . $fname);
 
-// log downloads
-if (!LOG_DOWNLOADS) {
-    die();
-}
 
 $f = @fopen(LOG_FILE, 'a+');
 if ($f) {
