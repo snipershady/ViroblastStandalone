@@ -7,17 +7,11 @@
 #######################################################################################
 require_once __DIR__ . '/bootstrap.php';
 $epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
-
+require_once __DIR__.'/template/header.php'; 
+require_once __DIR__.'/template/navbar.php'; 
 ?>
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Sequence Download Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    </head>
 
-    <body style="font-family: Courier New; font-size: 10pt">
 
         <?php
         set_time_limit(600);
@@ -27,7 +21,7 @@ $epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
         $seqtype = filter_input(INPUT_POST, "seqtype", FILTER_UNSAFE_RAW);
         $downloadFile = $jobid . ".download.fas";
         $blastFiles = [];
-        $fp_log = fopen("$dataPath/$jobid.log", "r") or die("Cannot open $jobid.log to read");
+        $fp_log = fopen("$dataPath/$jobid.log", "r") || die("Cannot open $jobid.log to read");
         while (!feof($fp_log)) {
             $line = fgets($fp_log);
             $line = rtrim($line);
@@ -68,7 +62,7 @@ $epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
             $querysbjcts[$querysbjct] = 1;
         }
 
-        $fp_dld = fopen("$dataPath/$jobid.download.fas", "w", 1) or die("couldn't open download.fas to write");
+        $fp_dld = fopen("$dataPath/$jobid.download.fas", "w", true) or die("couldn't open download.fas to write");
 
         if ($seqtype == "entire") {
             $sbjctSeq = [];
@@ -205,5 +199,5 @@ $epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
         fclose($fp);
         ?>
 
-    </body>
-</html>
+<?php
+require_once __DIR__.'/template/footer.php'; 

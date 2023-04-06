@@ -6,31 +6,10 @@
 # Written by Wenjie Deng in the Department of Microbiology at University of Washington.
 #######################################################################################
 require_once __DIR__ . '/bootstrap.php';
+
+require_once __DIR__.'/template/header.php'; 
+require_once __DIR__.'/template/navbar.php'; 
 ?>
-
-<!DOCTYPE html>
-<html>
-    <head> 
-        <title>ViroBlast Home Page</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="stylesheets/viroblast.css"  rel="Stylesheet" type="text/css" />
-        <script type="text/javascript" src='javascripts/viroblast.js'></script>
-    </head>
-    <body>
-
-        <div id="header">
-            <div class="spacer">&nbsp;</div>    
-            <span class="logo">ViroBLAST</span>   
-        </div>
-
-        <div id="nav">
-            <span class='nav'><a href="index.php" class="nav">Home</a></span>
-            <span class='nav'><a href=docs/aboutviroblast.html class="nav">About ViroBLAST</a></span>
-            <span class='nav'><a href=docs/viroblasthelp.html class="nav">Help</a></span>
-            &nbsp;
-        </div>
-
         <div class="spacer">&nbsp;</div>
 
         <div id="indent">
@@ -138,11 +117,5 @@ require_once __DIR__ . '/bootstrap.php';
 
         </div>
     </div>
-    <div id="footer" align="center">
-        <p>&copy; 2005-2010 University of Washington. All rights reserved.
-            &nbsp;<a href=docs/termsofservice.html>Terms of Service</a>
-        </p>
-    </div>
-
-</body>
-</html>
+<?php
+require_once __DIR__.'/template/footer.php'; 

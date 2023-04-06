@@ -13,28 +13,7 @@ $epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
 <html>
     <head><title>ViroBLAST Result Page</title>
         <link href="stylesheets/viroblast.css"  rel="Stylesheet" type="text/css" />
-        <script type="text/javascript" src='javascripts/sorttable.js'></script>
-        <script type="text/javascript">
-            function checkform(form) {
-                var checkbox_checked = 0;
-                if (form.dldseq.checked) {
-                    checkbox_checked++;
-                } else {
-                    for (var i = 0; i < form.checkedSeq.length; i++) {
-                        if (form.checkedSeq[i].checked) {
-                            checkbox_checked++;
-                            break;
-                        }
-                    }
-                }
 
-                if (checkbox_checked == 0) {
-                    alert("Please check the sequence(s) you want to download");
-                    return false;
-                }
-                return true;
-            }
-        </script>
     </head>
     <body>
         <div id="header">
@@ -42,12 +21,9 @@ $epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
             <span class="logo"><a name="top"></a>ViroBLAST Result</span>   
         </div>
 
-        <div id="nav">
-            <span class='nav'><a href="index.php" class="nav">Home</a></span>
-            <span class='nav'><a href=docs/aboutviroblast.html class="nav">About ViroBLAST</a></span>
-            <span class='nav'><a href=docs/viroblasthelp.html class="nav">Help</a></span>
-            &nbsp;
-        </div>
+        <?php
+        require_once __DIR__ . '/template/navbar.php';
+        ?>
 
         <div class="spacer">&nbsp;</div>
 
@@ -500,8 +476,29 @@ $epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
             ?>
 
         </div>
-        <div id="footer" align="center">
-            <p><font color='gray'>&copy; 2005-2010 University of Washington. All rights reserved.&nbsp;<a href=docs/termsofservice.html>Terms of Service</a></p>
-        </div>
-    </body>
-</html>
+
+        <script type="text/javascript" src='javascripts/sorttable.js'></script>
+        <script type="text/javascript">
+            function checkform(form) {
+                var checkbox_checked = 0;
+                if (form.dldseq.checked) {
+                    checkbox_checked++;
+                } else {
+                    for (var i = 0; i < form.checkedSeq.length; i++) {
+                        if (form.checkedSeq[i].checked) {
+                            checkbox_checked++;
+                            break;
+                        }
+                    }
+                }
+
+                if (checkbox_checked == 0) {
+                    alert("Please check the sequence(s) you want to download");
+                    return false;
+                }
+                return true;
+            }
+        </script>
+        <?php
+        require_once __DIR__ . '/template/footer.php';
+        
