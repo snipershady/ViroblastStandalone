@@ -1,3 +1,9 @@
+Apr. 7, 2023
+# Version 2.13.0+
+    # implements NCBI's blast+ version of 2.13.0
+    # refactoring PHP 8.2 compatibility
+    # refactoring authentication system
+
 Jan. 7, 2021
 # version 2.11.0+
   # implements NCBI's blast+ version of 2.11.0

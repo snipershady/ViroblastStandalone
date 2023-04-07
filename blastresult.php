@@ -49,7 +49,7 @@ $epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
             $alignmentView = (empty($_GET['alignmentView'])) ? '' : $_GET['alignmentView'];
 
             if ($blast_flag == 1) {
-                $jobid = time() . rand(10, 99);
+                $jobid = time() . random_int(10, 99);
             }
             if (!$blast_flag && !$jobid) {
                 echo "<p>Error: No job submitted.</p>";
