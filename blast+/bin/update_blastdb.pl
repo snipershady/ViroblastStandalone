@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: update_blastdb.pl 608596 2020-05-19 10:56:17Z ivanov $
+# $Id: update_blastdb.pl 632517 2021-06-02 15:53:15Z camacho $
 # ===========================================================================
 #
 #                            PUBLIC DOMAIN NOTICE
@@ -61,6 +61,9 @@ use constant GCP_BUCKET => "blast-db";
 use constant BLASTDB_MANIFEST => "blastdb-manifest.json";
 use constant BLASTDB_MANIFEST_VERSION => "1.0";
 
+use constant BLASTDB_METADATA => "blastdb-metadata-1-1.json";
+use constant BLASTDB_METADATA_VERSION => "1.1";
+
 # Process command line options
 my $opt_verbose = 1;
 my $opt_quiet = 0;
@@ -114,7 +117,7 @@ my $exit_code = 0;
 $|++;
 
 if ($opt_show_version) {
-    my $revision = '$Revision: 608596 $';
+    my $revision = '$Revision: 632517 $';
     $revision =~ s/\$Revision: | \$//g;
     print "$0 version $revision\n";
     exit($exit_code);
@@ -165,6 +168,78 @@ if ($location =~ /aws|gcp/i and not defined $curl) {
 
 my $ftp;
 
+sub validate_metadata_file
+{
+    my $json = shift;
+    my $url = shift;
+    my $metadata = decode_json($json);
+    if (ref($metadata) eq 'HASH') {
+        unless (exists($$metadata{version}) and ($$metadata{version} eq BLASTDB_MANIFEST_VERSION)) {
+            print STDERR "ERROR: Invalid version in manifest file $url, please report to blast-help\@ncbi.nlm.nih.gov\n";
+            exit(EXIT_FAILURE);
+        }
+    } elsif (not ref($metadata) eq 'ARRAY') {
+        print STDERR "ERROR: Invalid metadata format in $url, please report to blast-help\@ncbi.nlm.nih.gov\n";
+        exit(EXIT_FAILURE);
+    }
+}
+
+sub showall_from_metadata_file
+{
+    my $json = shift;
+    my $url = shift;
+    &validate_metadata_file($json, $url);
+    my $metadata = decode_json($json);
+    my $print_header = 1;
+    foreach my $db (sort keys %$metadata) {
+        next if ($db =~ /^version$/);
+        if ($opt_showall =~ /tsv/i) {
+            printf("%s\t%s\t%9.4f\t%s\n", $db, $$metadata{$db}{description}, 
+                $$metadata{$db}{size}, $$metadata{$db}{last_updated});
+        } elsif ($opt_showall =~ /pretty/i) {
+            if ($print_header) {
+                printf("%-60s %-120s %-11s %15s\n", "BLASTDB", 
+                    "DESCRIPTION", "SIZE (GB)", "LAST_UPDATED");
+                $print_header = 0;
+            }
+            printf("%-60s %-120s %9.4f %15s\n", $db, $$metadata{$db}{description}, 
+                $$metadata{$db}{size}, $$metadata{$db}{last_updated});
+        } else {
+            print "$db\n";
+        }
+    }
+}
+
+# Display metadata from version 1.1 of BLASTDB metadata files
+sub showall_from_metadata_file_1_1
+{
+    my $json = shift;
+    my $url = shift;
+    &validate_metadata_file($json, $url);
+    my $metadata = decode_json($json);
+    my $print_header = 1;
+    foreach my $db (sort @$metadata) {
+        next if ($$db{version} ne BLASTDB_METADATA_VERSION);
+        my $gb_total = sprintf("%.4f", $$db{'bytes-total'} * 1e-9);
+        my $last_updated = $$db{'last-updated'};
+        if ($opt_showall =~ /tsv/i) {
+            printf("%s\t%s\t%9.4f\t%s\n", $$db{dbname}, $$db{description}, 
+                $gb_total, $last_updated);
+        } elsif ($opt_showall =~ /pretty/i) {
+            if ($print_header) {
+                printf("%-60s %-120s %-11s %15s\n", "BLASTDB", 
+                    "DESCRIPTION", "SIZE (GB)", "LAST_UPDATED");
+                $print_header = 0;
+            }
+            $last_updated = $$db{'last-updated'} =~ s/T.*//r;
+            printf("%-60s %-120s %9.4f %15s\n", $$db{dbname}, $$db{description}, 
+                $gb_total, $last_updated);
+        } else {
+            print "$$db{dbname}\n";
+        }
+    }
+}
+
 if ($location ne "NCBI") {
     die "Only BLASTDB version 5 is supported at GCP and AWS\n" if (defined $opt_blastdb_ver and $opt_blastdb_ver != 5);
     my $latest_dir = &get_latest_dir($location);
@@ -174,30 +249,10 @@ if ($location ne "NCBI") {
         exit(EXIT_FAILURE);
     }
     print "Connected to $location\n" if $opt_verbose;
+    &validate_metadata_file($json, $url);
     my $metadata = decode_json($json);
-    unless (exists($$metadata{version}) and ($$metadata{version} eq BLASTDB_MANIFEST_VERSION)) {
-        print STDERR "ERROR: Invalid version in manifest file $url, please report to blast-help\@ncbi.nlm.nih.gov\n";
-        exit(EXIT_FAILURE);
-    }
     if (defined($opt_showall)) {
-        my $print_header = 1;
-        foreach my $db (sort keys %$metadata) {
-            next if ($db =~ /^version$/);
-            if ($opt_showall =~ /tsv/i) {
-                printf("%s\t%s\t%9.4f\t%s\n", $db, $$metadata{$db}{description}, 
-                    $$metadata{$db}{size}, $$metadata{$db}{last_updated});
-            } elsif ($opt_showall =~ /pretty/i) {
-                if ($print_header) {
-                    printf("%-60s %-120s %-11s %15s\n", "BLASTDB", 
-                        "DESCRIPTION", "SIZE (GB)", "LAST_UPDATED");
-                    $print_header = 0;
-                }
-                printf("%-60s %-120s %9.4f %15s\n", $db, $$metadata{$db}{description}, 
-                    $$metadata{$db}{size}, $$metadata{$db}{last_updated});
-            } else {
-                print "$db\n";
-            }
-        }
+        &showall_from_metadata_file($json, $url);
     } else {
         my @files2download;
         for my $requested_db (@ARGV) {
@@ -209,14 +264,22 @@ if ($location ne "NCBI") {
         }
         if (@files2download) {
             my $gsutil = &get_gsutil_path();
-            my $awscli = undef; # &get_awscli_path(); # aws s3 required credentials, fall back to curl
+            my $awscli = &get_awscli_path();
             my $cmd;
             my $fh = File::Temp->new();
             if ($location eq "GCP" and defined($gsutil)) {
-                $cmd = "$gsutil " . ($opt_nt > 1 ? "-m" : "" ) . " -q cp ";
+                $cmd = "$gsutil ";
+                if ($opt_nt > 1) {
+                    $cmd .= "-m -q ";
+                    $cmd .= "-o 'GSUtil:parallel_thread_count=1' -o 'GSUtil:parallel_process_count=$opt_nt' ";
+                    $cmd .= "cp ";
+                } else {
+                    $cmd .= "-q cp ";
+                }
                 $cmd .= join(" ", @files2download) . " .";
             } elsif ($location eq "AWS" and defined ($awscli)) {
-                my $aws_cmd = "$awscli s3 cp ";
+                # https://registry.opendata.aws/ncbi-blast-databases/#usageexamples
+                my $aws_cmd = "$awscli s3 cp --no-sign-request ";
                 $aws_cmd .= "--only-show-errors " unless $opt_verbose >= 3;
                 print $fh join("\n", @files2download);
                 $cmd = "/usr/bin/xargs -P $opt_nt -n 1 -I{}";
@@ -231,10 +294,10 @@ if ($location ne "NCBI") {
                     print $fh join("\n", @files2download);
                     $cmd = "/usr/bin/xargs -P $opt_nt -n 1";
                     $cmd .= " -t" if $opt_verbose > 3;
-                    $cmd .= " $curl -sOR";
+                    $cmd .= " $curl -sSOR";
                     $cmd .= " <$fh " ;
                 } else {
-                    $cmd = "$curl -sR";
+                    $cmd = "$curl -sSR";
                     $cmd .= " -O $_" foreach (@files2download);
                 }
             }
@@ -247,7 +310,16 @@ if ($location ne "NCBI") {
     # Connect and download files
     $ftp = &connect_to_ftp();
     if (defined $opt_showall) {
-        print "$_\n" foreach (sort(&get_available_databases($ftp->ls())));
+        my ($json, $url) = &get_blastdb_metadata($location, '');
+        unless (length($json)) {
+            print "$_\n" foreach (sort(&get_available_databases($ftp->ls())));
+        } else {
+            if (ref($json) eq 'HASH') {
+                &showall_from_metadata_file($json, $url)
+            } else {
+                &showall_from_metadata_file_1_1($json, $url)
+            }
+        }
     } else {
         my @files = sort(&get_files_to_download());
         my @files2decompress;
@@ -411,6 +483,11 @@ download_file:
 sub _decompress_impl($)
 {
     my $file = shift;
+    if ($^O eq "cygwin") {
+        local $ENV{PATH} = "/bin:/usr/bin";
+        my $cmd = "tar -zxf $file 2>/dev/null";
+        return 1 unless (system($cmd));
+    }
     unless ($^O =~ /win/i) {
         local $ENV{PATH} = "/bin:/usr/bin";
         my $cmd = "gzip -cd $file 2>/dev/null | tar xf - 2>/dev/null";
@@ -522,6 +599,7 @@ sub get_blastdb_metadata
     my $latest_dir = shift;
     my $url = GCS_URL . "/" . GCP_BUCKET . "/$latest_dir/" . BLASTDB_MANIFEST;
     $url = AWS_URL . "/" . AWS_BUCKET . "/$latest_dir/" . BLASTDB_MANIFEST if ($source eq "AWS");
+    $url = 'ftp://' . NCBI_FTP . "/blast/db/" . BLASTDB_METADATA if ($source eq 'NCBI');
     my $cmd = "curl -sf $url";
     print "$cmd\n" if DEBUG;
     chomp(my $retval = `$cmd`);
