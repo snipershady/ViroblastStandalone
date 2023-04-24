@@ -17,6 +17,7 @@ $params = $request->getParams();
 
 $alignmentView = 0;
 $opt = "";
+$blast_flag = ""; // Questa variabile viene usata in modo improprio sia come "string" che come "int". Shame on you Wenjie Deng.
 
 if ($request->isGet()) {
     $jobid = $epti->getTypedValue(filter_input(INPUT_GET, "jobid", FILTER_UNSAFE_RAW), true);
@@ -26,10 +27,10 @@ if ($request->isGet()) {
 
 if ($request->isPost()) {
     $blastdb = !empty($params["blastdb"]) && array_key_exists("blastdb", $params) && is_array($params["blastdb"]) ? $params["blastdb"] : ""; //(empty($_POST['blastdb'])) ? '' : $_POST['blastdb'];
-    $blastpath = !empty($params["blastpath"]) && array_key_exists("blastpath", $params) ? $params["blastpath"] : "";  //$params["blastpath"]; //(empty($_POST['blastpath'])) ? '' : $_POST['blastpath'];
-    $patientIDarray = !empty($params["patientIDarray"]) && array_key_exists("patientIDarray", $params) ? $params["patientIDarray"] : "";  //(empty($_POST['patientIDarray'])) ? '' : $_POST['patientIDarray'];
-    $dot = $epti->getTypedValue($request->getParamValueByKey("dot"));//   (int) filter_input(INPUT_POST, "dot", FILTER_VALIDATE_INT);
-    
+    $blastpath = !empty($params["blastpath"]) && array_key_exists("blastpath", $params) ? $epti->getTypedValueFromArray("blastpath", $params) : "";  //$params["blastpath"]; //(empty($_POST['blastpath'])) ? '' : $_POST['blastpath'];
+    $patientIDarray = !empty($params["patientIDarray"]) && array_key_exists("patientIDarray", $params) && is_array($params["patientIDarray"]) ? $params["patientIDarray"] : "";  //(empty($_POST['patientIDarray'])) ? '' : $_POST['patientIDarray'];
+    $dot = $epti->getTypedValue($request->getParamValueByKey("dot")); //   (int) filter_input(INPUT_POST, "dot", FILTER_VALIDATE_INT);
+    $blast_flag = !empty($params["blast_flag"]) && array_key_exists("blast_flag", $params) ? $epti->getTypedValueFromArray("blast_flag", $params) : 0; //(empty($_POST['blast_flag'])) ? '' : $_POST['blast_flag'];
 }
 ?>
 
@@ -53,7 +54,6 @@ if ($request->isPost()) {
         <div id="indent">
 
             <?php
-            $blast_flag = (empty($_POST['blast_flag'])) ? '' : $_POST['blast_flag'];
             $filter_flag = (empty($_POST['filter_flag'])) ? '' : $_POST['filter_flag'];
             $filt_val = (empty($_POST['filt_val'])) ? '' : $_POST['filt_val'];
             $cutoffType = (empty($_POST['cutoffType'])) ? '' : $_POST['cutoffType'];
@@ -61,14 +61,14 @@ if ($request->isPost()) {
             $blst_cutoff = (empty($_POST['blst_cutoff'])) ? '' : $_POST['blst_cutoff'];
             $searchType = (empty($_POST['searchType'])) ? '' : $_POST['searchType'];
             $program = (empty($_POST['program'])) ? '' : $_POST['program'];
-            
+
             $querySeq = (empty($_POST['querySeq'])) ? '' : $_POST['querySeq'];
             $blastagainstfile = (empty($_FILES['blastagainstfile']['name'])) ? '' : $_FILES['blastagainstfile']['name'];
 
-            if ($blast_flag == 1) {
+            if ($blast_flag === 1) {
                 $jobid = time() . random_int(10, 99);
             }
-            if (!$blast_flag && !$jobid) {
+            if (empty($blast_flag) && empty($jobid)) {
                 echo "<p>Error: No job submitted.</p>";
                 footer();
                 exit;
@@ -106,7 +106,7 @@ if ($request->isPost()) {
               }
              */
 
-            if ($blast_flag == 1) {
+            if ($blast_flag === 1) {
                 $nlstr = chr(10);
                 $crstr = chr(13);
 
@@ -215,14 +215,14 @@ if ($request->isPost()) {
                 }
             }
 
-            if ($cutoffType == 'pct') {
+            if ($cutoffType === 'pct') {
                 $criterion = $pct_cutoff;
             }
-            if ($cutoffType == 'blst') {
+            if ($cutoffType === 'blst') {
                 $criterion = $blst_cutoff;
             }
 
-            if (!$opt || $opt == 'wait') {
+            if (empty($opt) || $opt === 'wait') {
                 $progressdot = "image/progressdot.png";
                 echo "<p><strong>Your job is being processed ";
                 for ($i = 0; $i <= ((int) $dot % 6); $i++) {
@@ -235,14 +235,14 @@ if ($request->isPost()) {
                 echo "<p>This page will update itself automatically until search is done.</p>";
             }
 
-            if (!$opt || $opt == 'wait') {
+            if (empty($opt) || $opt === 'wait') {
                 echo "<META HTTP-EQUIV=\"refresh\" 
 	content=\"10;URL=blastresult.php?jobid=$jobid&alignmentView=$alignmentView&opt=wait&dot=$dot\">";
                 echo "<META HTTP-EQUIV=\"expires\" 
 		  CONTENT=\"now\">";
             }
 
-            if ($blast_flag == 1) {
+            if ($blast_flag === 1) {
                 $blastagainst = "";
                 if ($program == "blastn" || $program == "tblastn" || $program == "tblastx") {
                     $dbPath = "./db/nucleotide";
@@ -293,7 +293,7 @@ if ($request->isPost()) {
                     echo "location.replace('data/$jobid.blast')";
                     echo "</script>";
                 } else {
-                    if ($blast_flag == 'Parse again') {
+                    if ($blast_flag === 'Parse again') {
                         $print_flag = 0;
                         $cutoff_count = 0;
 
@@ -409,7 +409,7 @@ if ($request->isPost()) {
                             echo "<tbody>";
                             @ $fp = fopen("$dataPath/$jobid.download.txt", "w", 1) or die("Cannot open file: $jobid.download.txt");
 
-                            if ($blast_flag == 'Parse again' || ($opt == 'none' && !$filter_flag)) {
+                            if ($blast_flag === 'Parse again' || ($opt == 'none' && !$filter_flag)) {
                                 @ $fpout3 = fopen("$dataPath/$jobid.out.par", "r");
                                 if (!$fpout3) {
                                     echo "<p><strong> error: $php_errormsg  </strong></p></body></html>";
