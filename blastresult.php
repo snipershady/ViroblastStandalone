@@ -4,9 +4,33 @@
 # blastresult.php
 # Copyright © University of Washington. All rights reserved.
 # Written by Wenjie Deng in the Department of Microbiology at University of Washington.
+# Refactoring, fix, security and reengineered by Stefano Perrini of Università degli studi di Napoli
 #######################################################################################
 require_once __DIR__ . '/bootstrap.php';
-$epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
+
+use App\Component\Request;
+use TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService;
+
+$epti = new EffectivePrimitiveTypeIdentifierService();
+$request = new Request();
+$params = $request->getParams();
+
+$alignmentView = 0;
+$opt = "";
+
+if ($request->isGet()) {
+    $jobid = $epti->getTypedValue(filter_input(INPUT_GET, "jobid", FILTER_UNSAFE_RAW), true);
+    $alignmentView = $epti->getTypedValue(filter_input(INPUT_GET, "alignmentView", FILTER_UNSAFE_RAW), true);
+    $opt = $epti->getTypedValue(filter_input(INPUT_GET, "opt", FILTER_UNSAFE_RAW), true);
+}
+
+if ($request->isPost()) {
+    $blastdb = !empty($params["blastdb"]) && array_key_exists("blastdb", $params) && is_array($params["blastdb"]) ? $params["blastdb"] : ""; //(empty($_POST['blastdb'])) ? '' : $_POST['blastdb'];
+    $blastpath = !empty($params["blastpath"]) && array_key_exists("blastpath", $params) ? $params["blastpath"] : "";  //$params["blastpath"]; //(empty($_POST['blastpath'])) ? '' : $_POST['blastpath'];
+    $patientIDarray = !empty($params["patientIDarray"]) && array_key_exists("patientIDarray", $params) ? $params["patientIDarray"] : "";  //(empty($_POST['patientIDarray'])) ? '' : $_POST['patientIDarray'];
+    $dot = $epti->getTypedValue($request->getParamValueByKey("dot"));//   (int) filter_input(INPUT_POST, "dot", FILTER_VALIDATE_INT);
+    
+}
 ?>
 
 <!DOCTYPE html>
@@ -26,15 +50,9 @@ $epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
         ?>
 
         <div class="spacer">&nbsp;</div>
-
         <div id="indent">
 
             <?php
-            $jobid = $epti->getTypedValue(filter_input(INPUT_GET, "jobid", FILTER_UNSAFE_RAW), true);
-            $blastdb = (empty($_POST['blastdb'])) ? '' : $_POST['blastdb'];
-            $blastpath = (empty($_POST['blastpath'])) ? '' : $_POST['blastpath'];
-            $patientIDarray = (empty($_POST['patientIDarray'])) ? '' : $_POST['patientIDarray'];
-            $opt = $epti->getTypedValue(filter_input(INPUT_GET, "opt", FILTER_UNSAFE_RAW), true);
             $blast_flag = (empty($_POST['blast_flag'])) ? '' : $_POST['blast_flag'];
             $filter_flag = (empty($_POST['filter_flag'])) ? '' : $_POST['filter_flag'];
             $filt_val = (empty($_POST['filt_val'])) ? '' : $_POST['filt_val'];
@@ -43,10 +61,9 @@ $epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
             $blst_cutoff = (empty($_POST['blst_cutoff'])) ? '' : $_POST['blst_cutoff'];
             $searchType = (empty($_POST['searchType'])) ? '' : $_POST['searchType'];
             $program = (empty($_POST['program'])) ? '' : $_POST['program'];
-            $dot = (int) filter_input(INPUT_POST, "dot", FILTER_VALIDATE_INT);
+            
             $querySeq = (empty($_POST['querySeq'])) ? '' : $_POST['querySeq'];
             $blastagainstfile = (empty($_FILES['blastagainstfile']['name'])) ? '' : $_FILES['blastagainstfile']['name'];
-            $alignmentView = (empty($_GET['alignmentView'])) ? '' : $_GET['alignmentView'];
 
             if ($blast_flag == 1) {
                 $jobid = time() . random_int(10, 99);
@@ -83,9 +100,11 @@ $epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
                 $advanceParam = "";
             }
 
-            if (!$alignmentView) {
-                $alignmentView = 0;
-            }
+            /*
+              if (!$alignmentView) {
+              $alignmentView = 0;
+              }
+             */
 
             if ($blast_flag == 1) {
                 $nlstr = chr(10);
@@ -499,6 +518,5 @@ $epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
                 return true;
             }
         </script>
-        <?php
-        require_once __DIR__ . '/template/footer.php';
-        
+<?php
+require_once __DIR__ . '/template/footer.php';
