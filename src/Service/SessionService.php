@@ -87,11 +87,11 @@ final class SessionService {
         $maxlifetime = 60 * 60 * 24;
         $secure = false; // CheckDevProd::isDev() ? false : true;     // if you only want to receive the cookie over HTTPS
         $httponly = false; //CheckDevProd::isDev() ? false : true;   // prevent JavaScript access to session cookie
-        $session_name = "BESTIABASE_SESSION";                   // Name of the Cookie
+        $session_name = "BESTIABASE_SESSION";
         session_set_cookie_params($maxlifetime, '/', filter_input(INPUT_SERVER, "HTTP_HOST", FILTER_UNSAFE_RAW), $secure, $httponly);
-        //session_name($session_name);                      // Se si abilita, non funziona più manage^(-1)... che merda
+        session_name($session_name);
         session_start();
-        //session_regenerate_id();                          // Rende la sessione più sicura, ma crea tante chiave redis e a qualcuno potrebbe venire un coccolone
+        session_regenerate_id();
         $userId = $this->retrieve();
         if ($userId > 0) {
             $repo = new UserRepository();
