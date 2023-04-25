@@ -38,7 +38,7 @@ function getBlastFile(string $dataPath, int $jobid): array {
     while (!feof($fp_log)) {
         $line = rtrim(fgets($fp_log));
         if (preg_match("/Program: (\S+)/", $line, $match)) {
-            $program = $match[1];
+            $program = $match[1]; // Questo assegnamento? Caro Wenjie Deng, che lavoro amatoriale che hai combinato!!!
         } elseif (preg_match("/Blast against:\s+(.*)$/", $line, $match)) {
             $blastagainst = $match[1];
             if (preg_match("/\s+/", $blastagainst, $match)) {
@@ -91,7 +91,7 @@ for ($i = 0; $i < (is_countable($target) ? count($target) : 0); $i++) {
 
 $fp_dld = fopen("$dataPath/$jobid.download.fas", "w", true) or die("couldn't open download.fas to write");
 
-if ($seqtype == "entire") {
+if ($seqtype === "entire") {
     $sbjctSeq = [];
     $sbjctTitle = [];
     $flag = 0;
@@ -128,7 +128,7 @@ if ($seqtype == "entire") {
             fwrite($fp_dld, "$first\n");
         }
     }
-} elseif ($seqtype == "mapping") {
+} elseif ($seqtype === "mapping") {
     $accName = [];
     $querySeq = [];
     $sbjctSeq = [];
