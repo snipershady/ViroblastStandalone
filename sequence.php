@@ -5,57 +5,82 @@
 # sequence.php
 # Copyright © University of Washington. All rights reserved.
 # Written by Wenjie Deng in the Department of Microbiology at University of Washington.
+# Refactoring, fix, security and reengineered by Stefano Perrini of Università degli studi di Napoli 
 #######################################################################################
 require_once __DIR__ . '/bootstrap.php';
-$epti = new \TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService();
+
+use App\Component\Request;
+use TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService;
+
+/** @var Request $request */
+/** @var EffectivePrimitiveTypeIdentifierService $epti */
+$params = $request->getParams();
+
 require_once __DIR__ . '/template/header.php';
 require_once __DIR__ . '/template/navbar.php';
 
-set_time_limit(600);
 $jobid = $epti->getTypedValue(filter_input(INPUT_GET, "jobid", FILTER_UNSAFE_RAW), true);
+$downloadFile = $jobid . ".download.fas";
 $target = filter_input(INPUT_POST, "target", FILTER_UNSAFE_RAW);
 $dldseq = filter_input(INPUT_POST, "dldseq", FILTER_UNSAFE_RAW);
 $seqtype = filter_input(INPUT_POST, "seqtype", FILTER_UNSAFE_RAW);
-$downloadFile = $jobid . ".download.fas";
-$blastFiles = [];
 
-$fp_log = fopen("$dataPath/$jobid.log", "r");
-if ($fp_log === false) {
-    header("location: index.php");
-    exit;
-}
+set_time_limit(600);
 
-while (!feof($fp_log)) {
-    $line = fgets($fp_log);
-    $line = rtrim($line);
-    if (preg_match("/Program: (\S+)/", $line, $match)) {
-        $program = $match[1];
-    } elseif (preg_match("/Blast against:\s+(.*)$/", $line, $match)) {
-        $blastagainst = $match[1];
-        if (preg_match("/\s+/", $blastagainst, $match)) {
-            $blastFiles = preg_split("/\s+/", $blastagainst);
-        } else {
-            array_push($blastFiles, $blastagainst);
+function getBlastFile(string $dataPath, int $jobid): array {
+    $match = [];
+    $blastFiles = [];
+    $fp_log = fopen("$dataPath/$jobid.log", "r");
+    if ($fp_log === false) {
+        return [];
+    }
+
+    while (!feof($fp_log)) {
+        $line = rtrim(fgets($fp_log));
+        if (preg_match("/Program: (\S+)/", $line, $match)) {
+            $program = $match[1];
+        } elseif (preg_match("/Blast against:\s+(.*)$/", $line, $match)) {
+            $blastagainst = $match[1];
+            if (preg_match("/\s+/", $blastagainst, $match)) {
+                $blastFiles = preg_split("/\s+/", $blastagainst);
+            } else {
+                //array_push($blastFiles, $blastagainst);
+                $blastFiles[] = $blastagainst;
+            }
         }
     }
+    fclose($fp_log);
+    return $blastFiles;
 }
-fclose($fp_log);
+
+$blastFiles = getBlastFile($dataPath, $jobid);
 
 echo "<b><a href=./download.php?ID=$downloadFile><img src=image/download.png></a></b><br><br>";
 
-if ($dldseq) {
-    $fp_parse = fopen("$dataPath/$jobid.download.txt", "r") or die("Cannot open $jobid.download.txt to read");
+function getTarget(string $dataPath, int $jobid): array {
+    $fp_parse = fopen("$dataPath/$jobid.download.txt", "r");
+    if ($fp_parse === false) {
+        return [];
+    }
     $target = [];
     while (!feof($fp_parse)) {
-        $record = fgets($fp_parse);
-        $record = rtrim($record);
+        $record = rtrim(fgets($fp_parse));
         if (!$record) {
             continue;
         }
-        array_push($target, $record);
+        //array_push($target, $record);
+        $target[] = $record;
     }
     fclose($fp_parse);
+    return $target;
 }
+
+$target = [];
+if (!empty($dldseq)) {
+    $target = getTarget($dataPath, $jobid);
+}
+
+
 $sbjcts = [];
 $querysbjcts = [];
 for ($i = 0; $i < (is_countable($target) ? count($target) : 0); $i++) {
@@ -193,15 +218,18 @@ if ($seqtype == "entire") {
 }
 fclose($fp_dld);
 
-$fp = fopen("$dataPath/$jobid.download.fas", "r") or die("couldn't open $jobid.download.fas.");
-while (!feof($fp)) {
-    $line = fgets($fp);
-    $line = rtrim($line);
-    echo "$line<br>";
+function displayMatch(string $dataPath, int $jobid): void {
+    $fp = fopen("$dataPath/$jobid.download.fas", "r");
+    if ($fp === false) {
+        return;
+    }
+    while (!feof($fp)) {
+        $line = rtrim(fgets($fp));
+        echo "$line<br>";
+    }
+    fclose($fp);
 }
-fclose($fp);
-?>
 
-<?php
+displayMatch($dataPath, $jobid);
 
 require_once __DIR__ . '/template/footer.php';

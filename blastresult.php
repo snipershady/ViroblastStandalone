@@ -11,8 +11,8 @@ require_once __DIR__ . '/bootstrap.php';
 use App\Component\Request;
 use TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService;
 
-$epti = new EffectivePrimitiveTypeIdentifierService();
-$request = new Request();
+/** @var Request $request */
+/** @var EffectivePrimitiveTypeIdentifierService $epti */
 $params = $request->getParams();
 
 $alignmentView = 0;
@@ -518,5 +518,6 @@ if ($request->isPost()) {
                 return true;
             }
         </script>
-<?php
-require_once __DIR__ . '/template/footer.php';
+        <?php
+        require_once __DIR__ . '/template/footer.php';
+        
