@@ -25,4 +25,14 @@ interface UserRepositoryInterface {
     * @return User|null
     */
     function findOneUsernameAndPassword(string $username, string $password): ?User;
+    
+    /**
+     * 
+     * @param User $user
+     * @return bool
+     */
+    function save(User $user): bool;
+    
+    
+    function update(User $user): bool;
 }

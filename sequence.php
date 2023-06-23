@@ -21,7 +21,7 @@ require_once __DIR__ . '/template/navbar.php';
 
 $jobid = $epti->getTypedValue(filter_input(INPUT_GET, "jobid", FILTER_UNSAFE_RAW), true);
 $downloadFile = $jobid . ".download.fas";
-//$target = filter_input(INPUT_POST, "target", FILTER_UNSAFE_RAW); //Questa è inpiegabile, caro Wenjie Deng, fatto proprio le cose a cazzo!
+//$target = filter_input(INPUT_POST, "target", FILTER_UNSAFE_RAW); //Questa è inpiegabile, caro Wenjie Deng, hai fatto proprio le cose a cazzo!
 $dldseq = filter_input(INPUT_POST, "dldseq", FILTER_UNSAFE_RAW);
 $seqtype = filter_input(INPUT_POST, "seqtype", FILTER_UNSAFE_RAW);
 

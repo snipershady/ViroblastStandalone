@@ -30,6 +30,10 @@ class LoginController extends AbstractController {
 
         $this->redirect("index.php");
     }
+    
+    public function register(): void {
+        
+    }
 
     public function logout() {
         $this->session->destroy();

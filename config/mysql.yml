@@ -1,0 +1,6 @@
+connection:
+    dbhost: mithrandir
+    dbuser: bestiabase
+    dbpassword: password
+    dbname: bestiabase
+  

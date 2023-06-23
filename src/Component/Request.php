@@ -254,5 +254,4 @@ final class Request {
     private function getSanitizedString($value): string {
         return trim(filter_var($value, FILTER_UNSAFE_RAW, FILTER_NULL_ON_FAILURE));
     }
-
 }

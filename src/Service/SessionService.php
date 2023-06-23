@@ -85,7 +85,7 @@ final class SessionService {
      */
     public function start(): bool {
         $maxlifetime = 60 * 60 * 24;
-        $secure = false; // CheckDevProd::isDev() ? false : true;     // if you only want to receive the cookie over HTTPS
+        $secure = false; // CheckDevProd::isDev() ? false : true;    // if you only want to receive the cookie over HTTPS
         $httponly = false; //CheckDevProd::isDev() ? false : true;   // prevent JavaScript access to session cookie
         $session_name = "BESTIABASE_SESSION";
         session_set_cookie_params($maxlifetime, '/', filter_input(INPUT_SERVER, "HTTP_HOST", FILTER_UNSAFE_RAW), $secure, $httponly);

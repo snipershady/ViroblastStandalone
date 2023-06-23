@@ -1,12 +1,6 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-namespace App\Components;
+namespace App\Component;
 
 use Exception;
 use InvalidArgumentException;
@@ -19,7 +13,6 @@ use function is_string;
  * Description of RedirectResponse
  *
  * @author Stefano Perrini <stefano.perrini@bidoo.com> aka La Matrigna
- * @author Christian La Forgia <christian.laforgia@bidoo.com> aka Noidilaravel
  */
 final class RedirectResponse {
 

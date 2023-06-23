@@ -125,6 +125,13 @@ programs.
 ## MysqlConfiguration
 
 # Create Database
+
+## Connect to your mysql server as root 
+```bash
+mysql -u root -p
+```
+
+## Create a user and a db with strong password (not this in the example)
 ```bash
 CREATE USER 'bestiabase'@'%' IDENTIFIED BY  '9plSkyTfURuFaVePdkA7dIslhnKjar07laLUqvfYdvi60=';
 GRANT ALL PRIVILEGES ON bestiabase.* TO 'bestiabase'@'%' WITH GRANT OPTION;

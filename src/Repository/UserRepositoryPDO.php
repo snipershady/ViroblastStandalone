@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Service\Database\DatabaseConnection;
 use SQLite3;
 
 /**
@@ -17,14 +18,15 @@ class UserRepository implements UserRepositoryInterface {
      * {@inheritDoc}
      */
     public function findOneById(int $id): ?User {
-        $db = new SQLite3('database/bestiabase.db');
+        $db = new DatabaseConnection();
+        $pdo = $db->getConnection();
 
         $stm = $db->prepare('SELECT id, username, email, password, roles FROM user WHERE id = :id');
-        $stm->bindValue(":id", $id, SQLITE3_INTEGER);
+        $stm->bindValue(":id", $id);
 
         $res = $stm->execute();
 
-        $row = $res->fetchArray(SQLITE3_ASSOC);
+        $row = $res->fetchAll();
         if (empty($row)) {
             return null;
         }
@@ -42,15 +44,16 @@ class UserRepository implements UserRepositoryInterface {
      * {@inheritDoc}
      */
     public function findOneUsernameAndPassword(string $username, string $password): ?User {
-        $db = new SQLite3('database/bestiabase.db');
+        $db = new DatabaseConnection();
+        $pdo = $db->getConnection();
 
         $stm = $db->prepare('SELECT id, username, email, password, roles FROM user WHERE username = :username AND password = :password');
-        $stm->bindValue(":username", $username, SQLITE3_TEXT);
-        $stm->bindValue(":password", $password, SQLITE3_TEXT);
+        $stm->bindValue(":username", $username);
+        $stm->bindValue(":password", $password);
 
         $res = $stm->execute();
 
-        $row = $res->fetchArray(SQLITE3_ASSOC);
+        $row = $res->fetchAll();
         if (empty($row)) {
             return null;
         }
@@ -63,11 +66,4 @@ class UserRepository implements UserRepositoryInterface {
         return $user;
     }
 
-    public function save(User $user): bool {
-        
-    }
-
-    public function update(User $user): bool {
-        
-    }
 }
