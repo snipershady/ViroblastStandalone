@@ -121,3 +121,14 @@ This distribution comes with a default configuration file
 "viroblast.ini". The configuration file will set the path to
 blast+ program and what databases may be used with what
 programs.
+
+## MysqlConfiguration
+
+# Create Database
+```bash
+CREATE USER 'bestiabase'@'%' IDENTIFIED BY  '9plSkyTfURuFaVePdkA7dIslhnKjar07laLUqvfYdvi60=';
+GRANT ALL PRIVILEGES ON bestiabase.* TO 'bestiabase'@'%' WITH GRANT OPTION;
+CREATE DATABASE IF NOT EXISTS `bestiabase` COLLATE 'utf8mb4_unicode_ci' ;
+GRANT ALL PRIVILEGES ON bestiabase.* TO 'bestiabase'@'%' ;
+FLUSH PRIVILEGES ;
+```
