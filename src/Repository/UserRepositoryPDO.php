@@ -11,7 +11,7 @@ use SQLite3;
  *
  * @author Stefano Perrini <perrini.stefano@gmail.com> aka La Matrigna
  */
-class UserRepository implements UserRepositoryInterface {
+class UserRepositoryPDO implements UserRepositoryInterface {
 
     /**
      * 
@@ -66,4 +66,19 @@ class UserRepository implements UserRepositoryInterface {
         return $user;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public function save(User $user): bool {
+        
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public function update(User $user): bool {
+        
+    }
 }

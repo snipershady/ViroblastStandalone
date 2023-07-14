@@ -63,10 +63,16 @@ class UserRepository implements UserRepositoryInterface {
         return $user;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function save(User $user): bool {
         
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function update(User $user): bool {
         
     }
