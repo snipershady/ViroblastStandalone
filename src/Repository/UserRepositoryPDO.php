@@ -21,7 +21,7 @@ class UserRepositoryPDO implements UserRepositoryInterface {
         $db = new DatabaseConnection();
         $pdo = $db->getConnection();
 
-        $stm = $db->prepare('SELECT id, username, email, password, roles FROM user WHERE id = :id');
+        $stm = $pdo->prepare('SELECT id, username, email, password, roles FROM user WHERE id = :id');
         $stm->bindValue(":id", $id);
 
         $res = $stm->execute();
@@ -47,7 +47,7 @@ class UserRepositoryPDO implements UserRepositoryInterface {
         $db = new DatabaseConnection();
         $pdo = $db->getConnection();
 
-        $stm = $db->prepare('SELECT id, username, email, password, roles FROM user WHERE username = :username AND password = :password');
+        $stm = $pdo->prepare('SELECT id, username, email, password, roles FROM app_user WHERE username = :username AND password = :password');
         $stm->bindValue(":username", $username);
         $stm->bindValue(":password", $password);
 
@@ -67,18 +67,50 @@ class UserRepositoryPDO implements UserRepositoryInterface {
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     public function save(User $user): bool {
-        
+        return true;
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     public function update(User $user): bool {
-        
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function initDb(string $username, string $password, string $email): bool {
+
+        $sqlcreate = "CREATE TABLE IF NOT EXISTS app_user(
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                username VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                roles VARCHAR(255) NOT NULL,
+                INDEX `IDX_app_user_username` (`username`) USING BTREE,
+                INDEX `IDX_app_user_email` (`email`) USING BTREE
+            ) COLLATE='utf8mb4_unicode_ci' ENGINE=InnoDB
+            ";
+        $sqlInitAdmin = "INSERT INTO user(username, email, password, roles) VALUES(:username, :email, :password, '[\"ROLE_ADMIN\", \"ROLE_USER\"]')";
+
+        $db = new DatabaseConnection();
+        $pdo = $db->getConnection();
+        try {
+            $stm = $pdo->prepare($sqlcreate);
+            $stm->execute();
+
+            $stminitadmin = $pdo->prepare($sqlInitAdmin);
+            $stminitadmin->bindValue(":username", $username);
+            $stminitadmin->bindValue(":password", $password);
+            $stminitadmin->bindValue(":email", $email);
+            $stminitadmin->execute();
+        } catch (Exception $e) {
+            return false;
+        }
+        return true;
     }
 }

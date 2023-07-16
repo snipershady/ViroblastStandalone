@@ -21,7 +21,12 @@ final class ConfigurationHandler {
                 foreach($mysqlparameters["connection"] as $key => $value){
                     putenv($key.'='.$value);
                 }
+                foreach($mysqlparameters["setup"] as $key => $value){
+                    putenv($key.'='.$value);
+                }
             }
         }
     }
+    
+    
 }

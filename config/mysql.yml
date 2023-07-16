@@ -3,4 +3,3 @@ connection:
     dbuser: bestiabase
     dbpassword: password
     dbname: bestiabase
-  

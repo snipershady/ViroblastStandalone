@@ -67,13 +67,24 @@ class UserRepository implements UserRepositoryInterface {
      * {@inheritDoc}
      */
     public function save(User $user): bool {
-        
+        return true;
     }
 
     /**
      * {@inheritDoc}
      */
     public function update(User $user): bool {
-        
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function initDb(string $username, string $password, string $email): bool {
+        $db = new SQLite3('database/bestiabase.db');
+        $db->exec("DROP TABLE user");
+        $db->exec("CREATE TABLE user(id INTEGER PRIMARY KEY, username TEXT, email TEXT, password TEXT, roles TEXT)");
+        $db->exec("INSERT INTO user(username, email, password, roles) VALUES($username, $email, $password, '[\"ROLE_ADMIN\", \"ROLE_USER\"]')");
+        return true;
     }
 }

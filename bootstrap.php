@@ -12,8 +12,8 @@ use TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService;
 $request = new Request();
 $epti = new EffectivePrimitiveTypeIdentifierService();
 $session = SessionService::getInstance();
-$configuratioNHandler = new ConfigurationHandler();
-$configuratioNHandler->setEnviromentDataFromConfig();
+$configurationHandler = new ConfigurationHandler();
+$configurationHandler->setEnviromentDataFromConfig();
 
 if (!$session->isLoggedIn()) {
     header("location: login.php"); exit;
