@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Repository\UserRepositoryPDO;
 use App\Service\SessionService;
 
 /**
@@ -20,7 +20,7 @@ class LoginController extends AbstractController {
         }
         $username = $this->request->getParamValueByKey("username", false);
         $password = $this->request->getParamValueByKey("pswd", false);
-        $repo = new UserRepository();
+        $repo = new UserRepositoryPDO();
         $user = $repo->findOneUsernameAndPassword($username, $password);
         if ($user === null) {
             $this->redirect("login_page.php");
@@ -32,7 +32,17 @@ class LoginController extends AbstractController {
     }
     
     public function register(): void {
-        
+        $username = $this->request->getParamValueByKey("username", false);
+        $password = $this->request->getParamValueByKey("pswd", false);
+        $email = $this->request->getParamValueByKey("pswd", false);
+        $repo = new UserRepositoryPDO();
+        $user = new User();
+        $user
+                ->setEmail($email)
+                ->setPassword($password)
+                ->setRoles("'[\"ROLE_USER\"]'")
+                ->setUsername($username);
+        $repo->save($user);
     }
 
     public function logout() {
