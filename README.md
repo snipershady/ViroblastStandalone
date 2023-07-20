@@ -139,3 +139,24 @@ CREATE DATABASE IF NOT EXISTS `bestiabase` COLLATE 'utf8mb4_unicode_ci' ;
 GRANT ALL PRIVILEGES ON bestiabase.* TO 'bestiabase'@'%' ;
 FLUSH PRIVILEGES ;
 ```
+
+# Setup
+
+Run setup.php with all parameters required to init db and register administrator.
+Once setup is complete, delete the setup.php file. 
+setup.php can be executed only in cli and not from the web, but it's really unsafe to keep it inside the directory.
+If you need to run it again, you can download it from this git repo
+
+```php
+php setup.php admin_username admin_password admin_email
+```
+
+## Config file
+
+```yaml
+connection:
+    dbhost: mithrandir
+    dbuser: bestiabase
+    dbpass: 9qcPDKAZavydZFSzH5jIuw33Syqur2p2W2UIhz3s1ik=
+    dbname: bestiabase
+```
