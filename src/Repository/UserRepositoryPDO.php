@@ -22,12 +22,12 @@ class UserRepositoryPDO implements UserRepositoryInterface {
         $db = new DatabaseConnection();
         $pdo = $db->getConnection();
 
-        $stm = $pdo->prepare('SELECT id, username, email, password, roles FROM user WHERE id = :id');
+        $stm = $pdo->prepare('SELECT id, username, email, password, roles FROM app_user WHERE id = :id');
         $stm->bindValue(":id", $id);
 
         $res = $stm->execute();
 
-        $row = $res->fetchAll();
+        $row = $stm->fetch();
         if (empty($row)) {
             return null;
         }

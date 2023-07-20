@@ -9,6 +9,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 use App\Component\ConfigurationHandler;
 use App\Repository\UserRepositoryPDO;
 use TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService;
+
 $configurationHandler = new ConfigurationHandler();
 $configurationHandler->setEnviromentDataFromConfig();
 $epti = new EffectivePrimitiveTypeIdentifierService();

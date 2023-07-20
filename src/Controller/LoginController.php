@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepositoryPDO;
+use App\Service\PasswordHasher;
 use App\Service\SessionService;
 
 /**
@@ -19,9 +20,11 @@ class LoginController extends AbstractController {
             $this->redirect("login_page.php");
         }
         $username = $this->request->getParamValueByKey("username", false);
-        $password = $this->request->getParamValueByKey("pswd", false);
+        $plainPassword = $this->request->getParamValueByKey("pswd", false);
         $repo = new UserRepositoryPDO();
-        $user = $repo->findOneUsernameAndPassword($username, $password);
+        $ph = new PasswordHasher();
+        $user = $repo->findOneUsernameAndPassword($username, $ph->hashPassword($plainPassword));
+        
         if ($user === null) {
             $this->redirect("login_page.php");
         }
@@ -31,31 +34,28 @@ class LoginController extends AbstractController {
         $this->redirect("index.php");
     }
 
-    public function register(): bool {
+    public function register(): void {
         $username = $this->request->getParamValueByKey("username", false);
         $plainPassword = $this->request->getParamValueByKey("pswd", false);
         $email = $this->request->getParamValueByKey("pswd", false);
-        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-            return false;
-        }
+
+        $ph = new PasswordHasher();
         $repo = new UserRepositoryPDO();
         $user = new User();
-        $roles = ["ROLE_USER"];
+        $roles = ["ROLE_DISABLED"];
         $user
                 ->setEmail($email)
-                ->setPassword($this->hashPassword($plainPassword))
-                ->setRoles(json_encode($roles))
+                ->setPassword($ph->hashPassword($plainPassword))
+                ->setRoles($roles)
                 ->setUsername($username);
-        
-        return $repo->save($user);;
+        $repo->save($user);
+        $this->redirect("index.php");
     }
 
     public function logout() {
         $this->session->destroy();
         $this->redirect("index.php");
     }
-
-  
 
     private function isSamePassword(string $password, string $dbPassword): bool {
         return $password === $dbPassword && hash_equals($dbPassword, $password);

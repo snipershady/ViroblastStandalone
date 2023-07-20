@@ -8,14 +8,14 @@ use App\Component\ConfigurationHandler;
 use App\Service\SessionService;
 use TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService;
 
-
 $request = new Request();
 $epti = new EffectivePrimitiveTypeIdentifierService();
-$session = SessionService::getInstance();
 $configurationHandler = new ConfigurationHandler();
 $configurationHandler->setEnviromentDataFromConfig();
+$session = SessionService::getInstance();
 
 if (!$session->isLoggedIn()) {
-    header("location: login.php"); exit;
+    header("location: login.php");
+    exit;
 }
 

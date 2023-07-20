@@ -2,8 +2,9 @@
 
 namespace App\Service;
 
+use App\Component\ConfigurationHandler;
 use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Repository\UserRepositoryPDO;
 use function filter_var;
 use function session_start;
 
@@ -94,8 +95,8 @@ final class SessionService {
         session_regenerate_id();
         $userId = $this->retrieve();
         if ($userId > 0) {
-            $repo = new UserRepository();
-            $this->user = $repo->findOneById(1);
+            $repo = new UserRepositoryPDO();
+            $this->user = $repo->findOneById($userId);
         }
         return true;
     }
@@ -150,5 +151,4 @@ final class SessionService {
         unset($_SESSION[$key]);
         return true;
     }
-
 }

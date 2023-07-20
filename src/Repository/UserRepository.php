@@ -66,7 +66,7 @@ class UserRepository implements UserRepositoryInterface {
     /**
      * {@inheritDoc}
      */
-    public function save(User $user): bool {
+    public function save(User $user): ?User {
         return true;
     }
 
