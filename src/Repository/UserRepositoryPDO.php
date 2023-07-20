@@ -139,7 +139,7 @@ class UserRepositoryPDO implements UserRepositoryInterface {
         $stm->execute();
         $ph = new PasswordHasher();
         $user = $this->findOneUsernameAndPassword($username, $ph->hashPassword($password));
-        
+
         if ($user === null) {
             $roles = ["ROLE_ADMIN", "ROLE_USER"];
             $user = new User();
