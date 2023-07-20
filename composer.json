@@ -21,6 +21,7 @@
         "snipershady/ipapigeolocation": "^1.0",
         "snipershady/pwned-password-check": "^1.0",
         "snipershady/ratelimiter": "^1.0",
+        "snipershady/securecipher": "^1.0",
         "snipershady/typeidentifier": "^1.0",
         "symfony/yaml": "^6.3"
     },

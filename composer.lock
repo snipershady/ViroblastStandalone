@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "501c91c2919605c273cd72252f78d1b3",
+    "content-hash": "63332919a49d71f994ee81dd324d03d3",
     "packages": [
         {
             "name": "google/recaptcha",
@@ -278,6 +278,60 @@
                 "source": "https://github.com/snipershady/ratelimiter/tree/v1.0.3"
             },
             "time": "2022-11-06T17:48:02+00:00"
+        },
+        {
+            "name": "snipershady/securecipher",
+            "version": "v1.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/snipershady/securecipher.git",
+                "reference": "a558d9d11f01a463e0f10bac2b023da9f216b7fd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/snipershady/securecipher/zipball/a558d9d11f01a463e0f10bac2b023da9f216b7fd",
+                "reference": "a558d9d11f01a463e0f10bac2b023da9f216b7fd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^10.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SecureCipher\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Stefano Perrini",
+                    "email": "perrini.stefano@gmail.com",
+                    "homepage": "https://www.spinfo.it"
+                }
+            ],
+            "description": "A free, reliable and easy-to-use cipher to encrypt and decrypt strings",
+            "homepage": "https://www.spinfo.it",
+            "keywords": [
+                "IV",
+                "cipher",
+                "cryptography",
+                "decrypt",
+                "encrypt",
+                "securecipher"
+            ],
+            "support": {
+                "issues": "https://github.com/snipershady/securecipher/issues",
+                "source": "https://github.com/snipershady/securecipher/tree/v1.0.7"
+            },
+            "time": "2023-07-02T18:43:22+00:00"
         },
         {
             "name": "snipershady/typeidentifier",
