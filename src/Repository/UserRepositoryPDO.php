@@ -4,7 +4,8 @@ namespace App\Repository;
 
 use App\Entity\User;
 use App\Service\Database\DatabaseConnection;
-use SQLite3;
+use App\Service\PasswordHasher;
+use Exception;
 
 /**
  * Description of UserRepository
@@ -44,16 +45,20 @@ class UserRepositoryPDO implements UserRepositoryInterface {
      * {@inheritDoc}
      */
     public function findOneUsernameAndPassword(string $username, string $password): ?User {
+
         $db = new DatabaseConnection();
         $pdo = $db->getConnection();
 
-        $stm = $pdo->prepare('SELECT id, username, email, password, roles FROM app_user WHERE username = :username AND password = :password');
-        $stm->bindValue(":username", $username);
-        $stm->bindValue(":password", $password);
+        try {
+            $stm = $pdo->prepare('SELECT id, username, email, password, roles FROM app_user WHERE username = :username AND password = :password');
+            $stm->bindValue(":username", $username);
+            $stm->bindValue(":password", $password);
 
-        $res = $stm->execute();
-
-        $row = $res->fetchAll();
+            $res = $stm->execute();
+            $row = $stm->fetch();
+        } catch (Exception $e) {
+            return null;
+        }
         if (empty($row)) {
             return null;
         }
@@ -69,22 +74,56 @@ class UserRepositoryPDO implements UserRepositoryInterface {
     /**
      * {@inheritDoc}
      */
-    public function save(User $user): bool {
-        return true;
+    public function save(User $user): ?User {
+        $db = new DatabaseConnection();
+        $pdo = $db->getConnection();
+
+        $sql = "INSERT INTO app_user VALUES(NULL,:username, :email, :password, :roles )";
+        try {
+            $stm = $pdo->prepare($sql);
+            $stm->bindValue(":username", $user->getUsername());
+            $stm->bindValue(":email", $user->getEmail());
+            $stm->bindValue(":password", $user->getPassword());
+            $stm->bindValue(":roles", json_encode($user->getRoles()));
+            $stm->execute();
+        } catch (Exception $e) {
+            return null;
+        }
+        $user->setId($pdo->lastInsertId());
+        return $user;
     }
 
     /**
      * {@inheritDoc}
      */
     public function update(User $user): bool {
-        return true;
+        $db = new DatabaseConnection();
+        $pdo = $db->getConnection();
+
+        $sql = "UPDATE app_user set 
+            username = :username,
+            email= :email,
+            password= :password,
+            roles= :roles
+            WHERE id = :id
+            ";
+
+        $stm = $pdo->prepare($sql);
+        $stm->bindValue(":username", $user->getUsername());
+        $stm->bindValue(":email", $user->getEmail());
+        $stm->bindValue(":password", $user->getPassword());
+        $stm->bindValue(":roles", json_encode($user->getRoles()));
+        $stm->bindValue(":id", $user->getId());
+
+        return $stm->execute();
     }
 
     /**
      * {@inheritDoc}
      */
     public function initDb(string $username, string $password, string $email): bool {
-
+        $db = new DatabaseConnection();
+        $pdo = $db->getConnection();
         $sqlcreate = "CREATE TABLE IF NOT EXISTS app_user(
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 username VARCHAR(255) NOT NULL,
@@ -95,22 +134,23 @@ class UserRepositoryPDO implements UserRepositoryInterface {
                 INDEX `IDX_app_user_email` (`email`) USING BTREE
             ) COLLATE='utf8mb4_unicode_ci' ENGINE=InnoDB
             ";
-        $sqlInitAdmin = "INSERT INTO user(username, email, password, roles) VALUES(:username, :email, :password, '[\"ROLE_ADMIN\", \"ROLE_USER\"]')";
 
-        $db = new DatabaseConnection();
-        $pdo = $db->getConnection();
-        try {
-            $stm = $pdo->prepare($sqlcreate);
-            $stm->execute();
-
-            $stminitadmin = $pdo->prepare($sqlInitAdmin);
-            $stminitadmin->bindValue(":username", $username);
-            $stminitadmin->bindValue(":password", $password);
-            $stminitadmin->bindValue(":email", $email);
-            $stminitadmin->execute();
-        } catch (Exception $e) {
-            return false;
+        $stm = $pdo->prepare($sqlcreate);
+        $stm->execute();
+        $ph = new PasswordHasher();
+        $user = $this->findOneUsernameAndPassword($username, $ph->hashPassword($password));
+        
+        if ($user === null) {
+            $roles = ["ROLE_ADMIN", "ROLE_USER"];
+            $user = new User();
+            $user
+                    ->setEmail($email)
+                    ->setPassword($ph->hashPassword($password))
+                    ->setRoles($roles)
+                    ->setUsername($username);
+            $this->save($user);
         }
+
         return true;
     }
 }

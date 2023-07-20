@@ -14,17 +14,18 @@ class DatabaseConnection implements DatabasePdo {
     private ?string $dbuser = null;
     private ?string $dbpass = null;
     private ?string $dbname = null;
-    private static PDO $pdo = null;
+    private static ?PDO $pdo = null;
 
     public function __construct() {
         $this->dbhost = getenv("dbhost");
-        $this->dbuser = getenv("dbname");
+        $this->dbuser = getenv("dbuser");
         $this->dbpass = getenv("dbpass");
-        $this->dbname = getenv("dbhost");
+        $this->dbname = getenv("dbname");
     }
 
     private function createconnection(): PDO {
-        $pdo = new PDO("mysql:host=" . $this->dbhost . ";dbname=" . $this->dbname . ";charset=utf8mb4", $this->dbuser, $this->dbpass);
+        $dsn = "mysql:host=" . $this->dbhost . ";dbname=" . $this->dbname . ";charset=utf8mb4";
+        $pdo = new PDO($dsn, $this->dbuser, $this->dbpass);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
         $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);

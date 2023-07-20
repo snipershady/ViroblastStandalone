@@ -27,10 +27,11 @@ interface UserRepositoryInterface {
     function findOneUsernameAndPassword(string $username, string $password): ?User;
 
     /**
+     * 
      * @param User $user
-     * @return bool
+     * @return User|null
      */
-    function save(User $user): bool;
+    function save(User $user): ?User;
 
     /**
      * @param User $user
@@ -42,5 +43,5 @@ interface UserRepositoryInterface {
      * 
      * @return bool
      */
-    function initDb(string $username, string $password, string $email): bool ;
+    function initDb(string $username, string $password, string $email): bool;
 }
