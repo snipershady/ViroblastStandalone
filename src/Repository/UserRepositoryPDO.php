@@ -26,7 +26,9 @@ class UserRepositoryPDO implements UserRepositoryInterface {
         $stm->bindValue(":id", $id);
 
         $res = $stm->execute();
-
+        if ($res === false) {
+            return null;
+        }
         $row = $stm->fetch();
         if (empty($row)) {
             return null;
