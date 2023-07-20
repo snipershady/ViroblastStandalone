@@ -38,6 +38,10 @@ class LoginController extends AbstractController {
         $username = $this->request->getParamValueByKey("username", false);
         $plainPassword = $this->request->getParamValueByKey("pswd", false);
         $email = $this->request->getParamValueByKey("pswd", false);
+        if(empty($username) || empty($plainPassword) || empty($email)){
+            $this->session->set("error", "Invalid form data");
+            $this->redirect("index.php");
+        }
 
         $ph = new PasswordHasher();
         $repo = new UserRepositoryPDO();

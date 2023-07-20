@@ -41,19 +41,19 @@
 
                             <!-- Username input -->
                             <div class="form-outline mb-4">
-                                <input type="text" class="form-control form-control-lg" id="username" placeholder="Enter username" name="username">
+                                <input type="text" class="form-control form-control-lg" id="username" placeholder="Enter username" name="username" required="required">
                                 <label class="form-label" for="username">Username</label>
                             </div>
 
                             <!-- Email input -->
                             <div class="form-outline mb-4">
-                                <input type="email" class="form-control form-control-lg" id="email" placeholder="Enter email" name="email">
+                                <input type="email" class="form-control form-control-lg" id="email" placeholder="Enter email" name="email" required="required">
                                 <label class="form-label" for="email">Email</label>
                             </div>
 
                             <!-- Password input -->
                             <div class="form-outline mb-3">
-                                <input type="password" class="form-control form-control-lg" id="pwd" placeholder="Enter password" name="pswd">
+                                <input type="password" class="form-control form-control-lg" id="pwd" placeholder="Enter password" name="pswd" required="required">
                                 <label class="form-label" for="password">Password</label>
                             </div>
 

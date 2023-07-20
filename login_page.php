@@ -11,6 +11,24 @@
     </head>
     <body>
 
+
+        <?php
+        require_once __DIR__ . '/vendor/autoload.php';
+        $configurationHandler = new \App\Component\ConfigurationHandler();
+        $configurationHandler->setEnviromentDataFromConfig();
+        $session = \App\Service\SessionService::getInstance();
+        $error = $session->get("error", true);
+        if (!empty($error)):
+            ?>
+            <div class="container mt-5">
+                <div class="alert alert-primary" role="alert">
+                    <?php echo $error; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
+
+
         <section class="vh-100">
             <div class="container-fluid h-custom">
                 <div class="row d-flex justify-content-center align-items-center h-100">
@@ -41,13 +59,13 @@
 
                             <!-- Username input -->
                             <div class="form-outline mb-4">
-                                <input type="text" class="form-control form-control-lg" id="username" placeholder="Enter username" name="username">
+                                <input type="text" class="form-control form-control-lg" id="username" placeholder="Enter username" name="username" required="required">
                                 <label class="form-label" for="username">Username</label>
                             </div>
 
                             <!-- Password input -->
                             <div class="form-outline mb-3">
-                                <input type="password" class="form-control form-control-lg" id="pwd" placeholder="Enter password" name="pswd">
+                                <input type="password" class="form-control form-control-lg" id="pwd" placeholder="Enter password" name="pswd" required="required">
                                 <label class="form-label" for="password">Password</label>
                             </div>
 
