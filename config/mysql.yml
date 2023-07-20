@@ -1,5 +1,5 @@
 connection:
     dbhost: mithrandir
     dbuser: bestiabase
-    dbpassword: password
+    dbpass: gandalf
     dbname: bestiabase
