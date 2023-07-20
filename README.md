@@ -131,7 +131,7 @@ programs.
 mysql -u root -p
 ```
 
-## Create a user and a db with strong password (not this in the example)
+## Create a user and a db with strong password (not this one in the example)
 ```bash
 CREATE USER 'bestiabase'@'%' IDENTIFIED BY  '9plSkyTfURuFaVePdkA7dIslhnKjar07laLUqvfYdvi60=';
 GRANT ALL PRIVILEGES ON bestiabase.* TO 'bestiabase'@'%' WITH GRANT OPTION;
@@ -142,16 +142,8 @@ FLUSH PRIVILEGES ;
 
 # Setup
 
-Run setup.php with all parameters required to init db and register administrator.
-Once setup is complete, delete the setup.php file. 
-setup.php can be executed only in cli and not from the web, but it's really unsafe to keep it inside the directory.
-If you need to run it again, you can download it from this git repo
-
-```php
-php setup.php admin_username admin_password admin_email
-```
-
 ## Config file
+Edit the config/mysql.yml with db credentials
 
 ```yaml
 connection:
@@ -159,4 +151,13 @@ connection:
     dbuser: bestiabase
     dbpass: 9qcPDKAZavydZFSzH5jIuw33Syqur2p2W2UIhz3s1ik=
     dbname: bestiabase
+```
+
+Run setup.php with all parameters required to init db and register administrator.
+Once setup is complete, delete the setup.php file. 
+setup.php can be executed only in cli and not from the web, but it's really unsafe to keep it inside the directory.
+If you need to run it again, you can download it from this git repo
+
+```php
+php setup.php admin_username admin_password admin_email
 ```
