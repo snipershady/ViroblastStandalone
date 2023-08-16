@@ -13,6 +13,12 @@ interface UserRepositoryInterface {
 
     /**
      * 
+     * @return User[]
+     */
+    function findAll(): array;
+
+    /**
+     * 
      * @param int $id
      * @return User|null
      */

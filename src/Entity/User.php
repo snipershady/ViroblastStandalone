@@ -54,6 +54,10 @@ class User {
     public function getRoles(): array {
         return $this->roles;
     }
+    
+    public function getRolesHumanReadable(): string {
+        return implode(",", $this->roles);
+    }
 
     public function setRoles(array $roles): self {
         $this->roles = $roles;

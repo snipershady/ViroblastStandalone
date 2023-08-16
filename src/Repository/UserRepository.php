@@ -87,4 +87,11 @@ class UserRepository implements UserRepositoryInterface {
         $db->exec("INSERT INTO user(username, email, password, roles) VALUES($username, $email, $password, '[\"ROLE_ADMIN\", \"ROLE_USER\"]')");
         return true;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function findAll(): array {
+        return [];
+    }
 }

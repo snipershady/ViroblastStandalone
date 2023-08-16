@@ -155,4 +155,36 @@ class UserRepositoryPDO implements UserRepositoryInterface {
 
         return true;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function findAll(): array {
+        $db = new DatabaseConnection();
+        $pdo = $db->getConnection();
+
+        try {
+            $stm = $pdo->prepare('SELECT id, username, email, password, roles FROM app_user');
+
+            $res = $stm->execute();
+            $resultSet = $stm->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            return [];
+        }
+        if (empty($resultSet)) {
+            return [];
+        }
+        $result = [];
+        foreach ($resultSet as $row) {
+            $user = new User();
+            $user
+                    ->setId($row["id"])
+                    ->setUsername($row["username"])
+                    ->setEmail($row["email"])
+                    ->setRoles(json_decode($row["roles"]));
+            $result[$user->getUsername()] = $user;
+        }
+
+        return $result;
+    }
 }

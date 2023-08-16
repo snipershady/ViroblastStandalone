@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ./vendor/phpunit/phpunit/phpunit  src/tests/UserRepoTestCase.php -v
+ * ./vendor/phpunit/phpunit/phpunit  src/tests/UserRepoTestCase.php
  */
 
 namespace App\tests;
@@ -40,5 +40,13 @@ class UserRepoTestCase extends TestCase {
         $user = $repo->findOneUsernameAndPassword($username, $ph->hashPassword($plainPassword));
         $this->assertNotNull($user);
         $this->assertEquals($user::class, User::class);
+    }
+
+    public function testFindAll(): void {
+        $repo = new UserRepositoryPDO();
+
+        $allUser = $repo->findAll();
+        $this->assertNotNull($allUser);
+        $this->assertIsArray($allUser);
     }
 }
