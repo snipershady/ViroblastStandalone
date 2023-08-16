@@ -29,7 +29,7 @@ require_once __DIR__ . '/template/navbar.php';
                 <tr><td valign=top>
                         <a href=docs/blast_program.html>Program</a> 
                         <select id="programList" name='program' onchange="changeDBList(this.value, this.form.dbList, dblib[programNode.value]); changeParameters(this.value, 'adv_parameters');">
-                            <option value='blastn' selected>blastn
+                            <option value='blastn' selected="selected">blastn
                             <option value='blastp'>blastp
                             <option value='blastx'>blastx
                             <option value='tblastn'>tblastn
