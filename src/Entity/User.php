@@ -56,7 +56,7 @@ class User {
     }
     
     public function getRolesHumanReadable(): string {
-        return implode(",", $this->roles);
+        return str_replace("ROLE_", "", implode(",", $this->roles));
     }
 
     public function setRoles(array $roles): self {
