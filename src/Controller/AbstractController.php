@@ -25,8 +25,21 @@ abstract class AbstractController {
         $this->request = new Request();
     }
 
-    protected function isLoggedIn() {
-        return $this->user !== null;
+    /**
+     * 
+     * @return bool
+     */
+    protected function isLoggedIn(): bool {
+        return $this->isGranted("ROLE_USER");
+    }
+
+    /**
+     * 
+     * @param string $role
+     * @return bool
+     */
+    protected function isGranted(string $role): bool {
+        return !empty($this->user) && in_array($role, $this->user->getRoles());
     }
 
     /**
@@ -62,5 +75,4 @@ abstract class AbstractController {
         header("Location: $namepage");
         exit;
     }
-
 }

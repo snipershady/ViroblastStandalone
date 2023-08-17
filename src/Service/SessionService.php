@@ -66,7 +66,16 @@ final class SessionService {
      * @return bool
      */
     public function isLoggedIn(): bool {
-        return $this->getUser() !== null && is_array($this->getUser()->getRoles()) && in_array("ROLE_USER", $this->getUser()->getRoles());
+        return $this->isGranted("ROLE_USER");
+    }
+
+    /**
+     * 
+     * @param string $role
+     * @return bool
+     */
+    public function isGranted(string $role): bool {
+        return !empty($this->user) && is_array($this->getUser()->getRoles()) && in_array($role, $this->user->getRoles());
     }
 
     /**

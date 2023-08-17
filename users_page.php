@@ -17,6 +17,10 @@
         $configurationHandler = new \App\Component\ConfigurationHandler();
         $configurationHandler->setEnviromentDataFromConfig();
         $session = \App\Service\SessionService::getInstance();
+        $user = $session->getUser();
+        if (empty($user) || !in_array("ROLE_ADMIN", $user->getRoles())) {
+            exit;
+        }
         $error = $session->get("error", true);
         if (!empty($error)):
             ?>
@@ -41,30 +45,30 @@
                     </div>
                     <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
                         <h2>Users</h2>
-                            <p>Set user role</p>            
-                            <table class="table table-stripe">
-                              <thead class="table-primary">
+                        <p>Set user role</p>            
+                        <table class="table table-stripe">
+                            <thead class="table-primary">
                                 <tr>
-                                  <th>Username</th>
-                                  <th>Email</th>
-                                  <th>Role</th>
-                                  <th>Action</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Action</th>
                                 </tr>
-                              </thead>
-                              <tbody>
-                                  <?php foreach($allUser as $user): ?>
-                                      <tr>
-                                          <td><?php echo $user->getUsername() ?></td>
-                                          <td><?php echo $user->getEmail() ?></td>
-                                          <td><?php echo $user->getRolesHumanReadable() ?></td>
-                                         <td>
-                                            <a href="#"><i class="fas fa-eye"></i></a>
-                                            <a href="#"><i class="fas fa-pencil-alt"></i></a>
-                                         </td>
-                                      </tr>
-                                  <?php endforeach; ?>         
-                              </tbody>
-                            </table>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($allUser as $user): ?>
+                                    <tr>
+                                        <td><?php echo $user->getUsername() ?></td>
+                                        <td><?php echo $user->getEmail() ?></td>
+                                        <td><?php echo $user->getRolesHumanReadable() ?></td>
+                                        <td>
+                                            <a class="btn btn-success btn-sm" href="users_page_action.php?user_id=<?php echo $user->getId() ?>&action=enable" title="Enable User"><i class="fa-solid fa-check-double"></i></a>
+                                            <a class="btn btn-warning btn-sm" href="users_page_action.php?user_id=<?php echo $user->getId() ?>&action=disable" title="Disable User"><i class="fa-solid fa-user-lock"></i></a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>         
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

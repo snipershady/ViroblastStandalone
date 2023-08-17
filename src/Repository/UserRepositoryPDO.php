@@ -37,6 +37,7 @@ class UserRepositoryPDO implements UserRepositoryInterface {
         $user
                 ->setId($row["id"])
                 ->setUsername($row["username"])
+                ->setPassword($row["password"])
                 ->setEmail($row["email"])
                 ->setRoles(json_decode($row["roles"]));
         return $user;
@@ -68,6 +69,7 @@ class UserRepositoryPDO implements UserRepositoryInterface {
         $user
                 ->setId($row["id"])
                 ->setUsername($row["username"])
+                ->setPassword($row["password"])
                 ->setEmail($row["email"])
                 ->setRoles(json_decode($row["roles"]));
         return $user;
