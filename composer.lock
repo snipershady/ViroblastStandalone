@@ -4,28 +4,32 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "861d92d7789ffad3b3aa31d16d3a7315",
+    "content-hash": "3d6c58c26ae36494b973a3dff12741b2",
     "packages": [
         {
             "name": "snipershady/typeidentifier",
-            "version": "v1.0.2",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/snipershady/type-identifier.git",
-                "reference": "316aee3cf456cb09acf100d5199bd235a32d8150"
+                "reference": "543dca2d646be9c7319f1b1189b19e5fece02d4f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/snipershady/type-identifier/zipball/316aee3cf456cb09acf100d5199bd235a32d8150",
-                "reference": "316aee3cf456cb09acf100d5199bd235a32d8150",
+                "url": "https://api.github.com/repos/snipershady/type-identifier/zipball/543dca2d646be9c7319f1b1189b19e5fece02d4f",
+                "reference": "543dca2d646be9c7319f1b1189b19e5fece02d4f",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.6"
+                "php": "^8.3"
             },
             "require-dev": {
-                "phpstan/phpstan": "*",
-                "phpunit/phpunit": "*"
+                "friendsofphp/php-cs-fixer": "^3.95.23",
+                "phpstan/phpstan": "^2.2.9",
+                "phpstan/phpstan-phpunit": "^2.0.18",
+                "phpstan/phpstan-strict-rules": "^2.0.12",
+                "phpunit/phpunit": "^12.5.34",
+                "rector/rector": "^2.6.4"
             },
             "type": "library",
             "autoload": {
@@ -35,7 +39,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "GPL-3.0-or-later"
+                "GPL-2.0-only"
             ],
             "authors": [
                 {
@@ -53,21 +57,21 @@
             ],
             "support": {
                 "issues": "https://github.com/snipershady/type-identifier/issues",
-                "source": "https://github.com/snipershady/type-identifier/tree/v1.0.2"
+                "source": "https://github.com/snipershady/type-identifier/tree/v2.0.1"
             },
-            "time": "2022-09-29T10:37:17+00:00"
+            "time": "2026-08-29T15:38:06+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.1",
+        "php": "^8.3",
         "ext-json": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }

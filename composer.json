@@ -3,14 +3,14 @@
     "description": "Description of project bestiablast.",
     "authors": [
         {
-            "name": "shady",
+            "name": "Stefano Perrini",
             "email": "snipershady@gmail.com"
         }
     ],
     "require": {
-        "php": ">=8.1",
+        "php": "^8.3",
         "ext-json": "*",
-        "snipershady/typeidentifier": "^1.0"
+        "snipershady/typeidentifier": "^2.0"
     },
     "config": {
         "optimize-autoloader": true,
